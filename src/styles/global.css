@@ -1,0 +1,64 @@
+/* Hybrid-minimal: clean sans-serif, one column, whitespace as the design.
+   No cards, no shadows, no framework. Every rule earns its place. */
+
+:root {
+  --ink: #1a1a1a;
+  --muted: #666;
+  --faint: #ddd;
+  --accent: #0b5fff;
+  --bg: #fff;
+  --measure: 42rem; /* max text column width — ~70 chars/line for readability */
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 4rem 1.25rem;
+}
+
+/* Nav: plain text links, current page underlined */
+nav {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 4rem;
+  font-size: 0.95rem;
+}
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--ink); }
+nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+h1 { font-size: 2rem; letter-spacing: -0.02em; line-height: 1.2; }
+h2 { font-size: 1.25rem; margin-top: 3rem; margin-bottom: 0.75rem; }
+p { margin-bottom: 1rem; }
+.tagline { color: var(--muted); font-size: 1.15rem; margin-top: 0.5rem; }
+
+/* Project list: rows separated by hairlines, not cards */
+.projects { list-style: none; padding: 0; }
+.projects li { border-top: 1px solid var(--faint); padding: 1.25rem 0; }
+.projects li:last-child { border-bottom: 1px solid var(--faint); }
+.projects a { color: var(--ink); font-weight: 600; text-decoration: none; }
+.projects a:hover { color: var(--accent); }
+.projects p { color: var(--muted); margin: 0.25rem 0 0; }
+
+a { color: var(--accent); }
+
+footer {
+  margin-top: 5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--faint);
+  color: var(--muted);
+  font-size: 0.85rem;
+  display: flex;
+  gap: 1.25rem;
+}
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--ink); }
