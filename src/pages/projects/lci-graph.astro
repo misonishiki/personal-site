@@ -1,5 +1,23 @@
 ---
 import Base from '../../layouts/Base.astro';
+
+// Shown verbatim in the "Export" section. Kept as a string so Astro doesn't
+// parse the JSON braces as template expressions.
+const jsonldSnippet = `{
+  "@type": "Process",
+  "name": "CSTR 10 bar using serpentine — state-of-the-art",
+  "processType": "UNIT_PROCESS",
+  "exchanges": [
+    {
+      "@type": "Exchange",
+      "isInput": true,
+      "amount": 324.0,
+      "unit": { "name": "kWh/ton stored CO2" },
+      "flow": { "name": "Electricity", "flowType": "PRODUCT_FLOW" }
+    },
+    …
+  ]
+}`;
 ---
 
 <Base
@@ -34,6 +52,30 @@ import Base from '../../layouts/Base.astro';
     <figcaption>Papers in the database — each with its DOI, system boundary, and background database preserved.</figcaption>
   </figure>
 
+  <h2>From paper to database</h2>
+  <p>
+    This is the core of it. On the left of the pipeline: a table buried on page S12 of a
+    paper's supplementary PDF. On the right: the same inventory as typed, unit-checked
+    rows in the database — every value traceable back to that table.
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/paper-table-s6.png" alt="Table S6 from the paper's supplementary PDF: LCI data of CSTR 10 bar using serpentine, with columns for electricity, thermal energy, and carbon footprint per life-cycle stage." loading="lazy" />
+    <figcaption>
+      Before: Table S6 in the supplementary PDF of
+      <a href="https://doi.org/10.1039/D0SE00190B">Ostovari et al. 2020</a> — electricity,
+      thermal energy, and footprint per life-cycle stage, with footnoted assumptions.
+    </figcaption>
+  </figure>
+  <figure>
+    <img src="/snapshots/lci-graph/extracted-cstr10bar.png" alt="The same table after extraction into LCI·GRAPH: typed flows with amounts and units, methodology context, export buttons, and data-quality warnings." loading="lazy" />
+    <figcaption>
+      After: the same table in LCI·GRAPH. The 20 / 324 / 441 kWh rows are all there —
+      and where the paper is ambiguous (an empty thermal-energy cell), the pipeline
+      raises an explicit data-quality warning instead of silently guessing. The
+      footnotes survived too, as assumptions on the dataset.
+    </figcaption>
+  </figure>
+
   <h2>Design decisions</h2>
   <p>
     <strong>An inventory without its boundary conditions is not data, it's decoration.</strong>
@@ -60,6 +102,28 @@ import Base from '../../layouts/Base.astro';
   <figure>
     <img src="/snapshots/lci-graph/meta-analysis.png" alt="Meta-analysis view: canonical materials ranked by number of flows and studies they appear in." loading="lazy" />
     <figcaption>Once flows are normalized to canonical materials, cross-study questions become answerable — e.g. which materials the literature actually covers.</figcaption>
+  </figure>
+
+  <h2>Export to the tools you already use</h2>
+  <p>
+    A database nobody can get data out of is a roach motel. Every study and every
+    individual process exports with one click to the formats practitioners actually
+    work in: <strong>openLCA JSON-LD</strong>, <strong>SimaPro CSV</strong>, <strong>ILCD</strong>
+    (GaBi), and <strong>EcoSpold2</strong>. The openLCA export
+    is a standards-compliant JSON-LD package — processes, flows, units, and flow
+    properties as linked entities:
+  </p>
+  <pre>{jsonldSnippet}</pre>
+  <p>
+    In openLCA it's <em>File → Import → JSON-LD</em>, and the process drops into the
+    navigation tree ready to build a product system from. No re-typing, no unit
+    conversion errors, no lost footnotes. Here's the whole round trip:
+  </p>
+  <figure>
+    <video src="/snapshots/lci-graph/export-openlca.mp4" autoplay muted loop playsinline></video>
+    <figcaption>
+      Export side: from the study page to a downloaded openLCA JSON-LD package in one click.
+    </figcaption>
   </figure>
 
   <h2>Where it stands</h2>

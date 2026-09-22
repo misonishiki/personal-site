@@ -1,12 +1,12 @@
-/* Hybrid-minimal: clean sans-serif, one column, whitespace as the design.
+/* Hybrid-minimal, dark-first: clean sans-serif, one column, whitespace as the design.
    No cards, no shadows, no framework. Every rule earns its place. */
 
 :root {
-  --ink: #1a1a1a;
-  --muted: #666;
-  --faint: #ddd;
-  --accent: #0b5fff;
-  --bg: #fff;
+  --ink: #e8e6e3;
+  --muted: #9a958c;
+  --faint: #2c2a26;
+  --accent: #6b9dff;
+  --bg: #141312;
   --measure: 42rem; /* max text column width — ~70 chars/line for readability */
 }
 
@@ -56,7 +56,7 @@ a { color: var(--accent); }
 .backlink a { color: var(--muted); text-decoration: none; }
 .backlink a:hover { color: var(--ink); }
 figure { margin: 2rem 0; }
-figure img {
+figure img, figure video {
   width: 100%;
   display: block;
   border: 1px solid var(--faint);
@@ -64,6 +64,16 @@ figure img {
 }
 figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
 .muted-note { color: var(--muted); font-size: 0.9rem; }
+pre {
+  background: #0d0c0b;
+  border: 1px solid var(--faint);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
 
 footer {
   margin-top: 5rem;
