@@ -1,6 +1,6 @@
 # personal-site
 
-Alissa Nicolet's portfolio — Astro static site, deployed to Cloudflare Pages.
+Alissa Nicole's portfolio — Astro static site, deployed to Cloudflare Pages.
 
 ## Stack
 

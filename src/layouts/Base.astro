@@ -7,7 +7,7 @@ interface Props {
   current?: string; // nav key of the current page, for the underline
 }
 
-const { title, description = 'Alissa Nicolet — LCA engineer & software builder', current } = Astro.props;
+const { title, description = 'Alissa Nicole — LCA engineer & software builder', current } = Astro.props;
 
 // TODO(go-live): replace with real values before publishing —
 // see .scratch/personal-site-go-live/ in the bunker repo.
@@ -42,7 +42,7 @@ const nav = [
         <slot />
       </main>
       <footer>
-        <span>© {new Date().getFullYear()} Alissa Nicolet</span>
+        <span>© {new Date().getFullYear()} Alissa Nicole</span>
         <a href={`mailto:${email}`}>Email</a>
         <a href={linkedin} rel="me">LinkedIn</a>
         <a href="https://scop3.substack.com/" rel="me">Substack</a>
