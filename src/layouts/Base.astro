@@ -9,6 +9,11 @@ interface Props {
 
 const { title, description = 'Alissa Nicolet — LCA engineer & software builder', current } = Astro.props;
 
+// TODO(go-live): replace with real values before publishing —
+// see .scratch/personal-site-go-live/ in the bunker repo.
+const email = 'TODO-email@example.com';
+const linkedin = 'https://www.linkedin.com/in/TODO';
+
 const nav = [
   { href: '/', label: 'Home', key: 'home' },
   { href: '/about', label: 'About', key: 'about' },
@@ -38,10 +43,9 @@ const nav = [
       </main>
       <footer>
         <span>© {new Date().getFullYear()} Alissa Nicolet</span>
-        <a href="mailto:hello@example.com">Email</a>
-        <a href="https://www.linkedin.com/" rel="me">LinkedIn</a>
-        <a href="https://substack.com/" rel="me">Substack</a>
-        <a href="https://github.com/" rel="me">GitHub</a>
+        <a href={`mailto:${email}`}>Email</a>
+        <a href={linkedin} rel="me">LinkedIn</a>
+        <a href="https://scop3.substack.com/" rel="me">Substack</a>
       </footer>
     </div>
   </body>
