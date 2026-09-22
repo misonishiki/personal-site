@@ -1,0 +1,76 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="LCI·GRAPH — Alissa Nicolet"
+  description="Case study: LCI·GRAPH, an open-source pipeline that extracts life-cycle inventory data from academic papers into a queryable database."
+  current="home"
+>
+  <p class="backlink"><a href="/">← All projects</a></p>
+  <h1>LCI·GRAPH</h1>
+  <p class="tagline">An open-source pipeline that turns the LCA literature into a queryable inventory database.</p>
+
+  <h2>The problem</h2>
+  <p>
+    Some of the best life-cycle inventory data in the field is published in academic
+    papers — and then effectively buried. The numbers live in PDF tables and
+    supplementary files, in whatever format the authors happened to use. If you need
+    them, you re-transcribe them by hand; if you want to compare across studies, you
+    first have to undo every paper's idiosyncrasies. Practitioners redo this work
+    over and over, privately, and throw it away.
+  </p>
+
+  <h2>What it does</h2>
+  <p>
+    LCI·GRAPH ingests a paper and its supplements, extracts the inventory tables,
+    links every flow to a canonical dataset, and stores the result in a database you
+    can actually query — then exports to the formats practitioners already use
+    (openLCA JSON-LD, SimaPro CSV, ILCD, EcoSpold2).
+  </p>
+
+  <figure>
+    <img src="/snapshots/lci-graph/studies-browser.png" alt="LCI·GRAPH study browser: a list of ingested papers with DOI, system boundary, background database, and review status." loading="lazy" />
+    <figcaption>Papers in the database — each with its DOI, system boundary, and background database preserved.</figcaption>
+  </figure>
+
+  <h2>Design decisions</h2>
+  <p>
+    <strong>An inventory without its boundary conditions is not data, it's decoration.</strong>
+    Every extracted dataset carries its methodology context — system boundary, LCIA
+    method, allocation, source DOI — displayed next to the numbers wherever they
+    appear. Two inventories are only comparable when you know what each one counted.
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/lci-inventory.png" alt="An extracted unit process: PEM electrolysis stack construction, with methodology context and a flow table mapped to ecoinvent datasets." loading="lazy" />
+    <figcaption>An extracted unit process: flows mapped to canonical ecoinvent datasets, methodology context pinned to the top.</figcaption>
+  </figure>
+  <p>
+    <strong>LLMs draft, rules decide, humans approve.</strong> Extraction is done by a
+    language model with structured prompts — no training set, because no two papers
+    format their tables alike. But nothing enters the database as fact: extractions
+    land as <em>pending review</em>, corrections are made in a review interface, and
+    those corrections feed back as extraction rules so the same mistake is not made twice.
+  </p>
+  <p>
+    <strong>Accuracy is measured, not asserted.</strong> The pipeline is evaluated
+    against a golden set of hand-verified extractions, so a prompt change or model
+    swap shows up as a number, not a vibe.
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/meta-analysis.png" alt="Meta-analysis view: canonical materials ranked by number of flows and studies they appear in." loading="lazy" />
+    <figcaption>Once flows are normalized to canonical materials, cross-study questions become answerable — e.g. which materials the literature actually covers.</figcaption>
+  </figure>
+
+  <h2>Where it stands</h2>
+  <p>
+    The platform runs locally with a growing set of ingested studies across hydrogen,
+    steel, magnets, and carbon capture. Next steps are the graph layer proper —
+    moving from a relational store to Neo4j so dataset relationships are first-class —
+    and widening the evaluation set before opening contributions.
+  </p>
+  <p class="muted-note">
+    Screenshots are static snapshots of the local platform; there is no live demo —
+    the database contains other people's published data, shown here for illustration.
+  </p>
+</Base>
