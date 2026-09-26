@@ -4,8 +4,9 @@
 
 > `continue personal-site — I have the openLCA screen recording (or: skip it). Pending: embed the import clip in the LCI·GRAPH case study export section; footer email/LinkedIn TODOs still live. Optional: Slice 3 = GreenClaim case study.`
 
-Context (as of 2026-09-22):
+Context (as of 2026-09-26):
 
+- **Graph-DB MVP section live** (2026-09-26): new "The graph layer, put to a falsifiable test" section in the LCI·GRAPH case study + rewritten "Where it stands". Figure `bom-graph-projection.png` is a Neo4j Browser screenshot of the client-BoM subgraph — reproducible: neo4j-poc docker up (colima), then run the single-line viz query via playwright-core against `localhost:7474` (script pattern: connect dialog → `.cm-content` editor → **single-line query + insertText** — the new Query UI executes on Enter, so multi-line typed queries run per line; click the Run button, then zoom-to-fit + one zoom-in so captions render, screenshot `.ndl-graph-visualization-container`). Source docs: `~/Documents/lci-graph/lci_extractor/Graph DB — MVP hypothesis & architecture.md` §8 (gate: GO).
 - **Live at https://alissa.ing** — deploy = push to `main` (Cloudflare, set up by the go-live wizard; env in `.scratch/personal-site-go-live/go-live.env`).
 - **Site is dark-mode** (dark-first palette in `global.css`) and has a **lightbox** (vanilla JS in `Base.astro`: any `<figure><img>` expands on click, Esc/click closes).
 - **LCI·GRAPH case study** (`src/pages/projects/lci-graph.astro`) is enriched: dark-mode UI snapshots, "From paper to database" section (real Table S6 from `~/Documents/lci-graph/labour/d0se00190b/d0se00190b1.pdf` p.S12 vs the extracted process), "Export to the tools you already use" section (JSON-LD snippet + an 8s export clip `export-openlca.mp4` recorded headlessly). Snapshots live in `public/snapshots/lci-graph/` and are reproducible: run the app on :8017, drive it with playwright-core + cached Chromium (`/private/tmp/bunker-pw/shot-lcigraph.js` pattern, NODE_PATH=`~/.hermes/hermes-agent/node_modules`).

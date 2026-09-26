@@ -124,12 +124,67 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
+  <h2>The graph layer, put to a falsifiable test</h2>
+  <p>
+    The relational store works, but the data underneath it is graph-shaped: activities
+    connected by flows, with identity, provenance, and hierarchy. Every new comparison
+    feature kept dying on the relational shape. Still, "use a graph database" is also a
+    fashionable answer — so instead of migrating on faith, I framed it as a falsifiable
+    hypothesis and built a proof of concept designed to be able to fail.
+  </p>
+  <p>
+    The hypothesis: a vocabulary of five node labels and eight edge types can hold both
+    paper-extracted inventories <em>and</em> a client bill of materials without schema
+    additions, and makes the comparison and composition questions answerable as simple
+    traversals that are painful over the relational equivalent. The method was a
+    read-only projection — SQLite stays the system of record, a mechanical exporter
+    rebuilds a Neo4j projection, and if the hypothesis failed I'd delete it and nothing
+    was lost. The test was a six-question checklist run on real data: three papers on
+    rare-earth magnet recycling, plus a real client BoM (a SAP export for a polyester
+    knit fabric).
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/bom-graph-projection.png" alt="Neo4j graph view of the client bill of materials: three assembly levels (orange), twelve leaf exchanges (yellow), and eleven canonical materials, connected by PART_OF, CONSUMES, and INSTANCE_OF edges." loading="lazy" />
+    <figcaption>
+      The client BoM living in the same graph as the paper world: three assembly levels,
+      twelve leaf exchanges, eleven canonical materials. The disperse dye at the top
+      is <em>one</em> node consumed by two process steps — in the spreadsheet it's two rows
+      joined only by a human reading the article number.
+    </figcaption>
+  </figure>
+  <p>
+    <strong>The vocabulary held.</strong> Both worlds — academic LCIs and an ERP-sourced
+    BoM — were represented with zero new node labels and zero new edge types, and every
+    node traces back to its source.
+  </p>
+  <p>
+    <strong>The roll-up math was checked by hand.</strong> Collapsing a study to one
+    black box (internal flows cancel, boundary flows sum, quantities rescale along the
+    chain) matched a hand-calculated roll-up exactly, for all eight scenario variants of
+    the study — including the variants where the chain's conversion denominator changes.
+  </p>
+  <p>
+    <strong>Flattening became a query.</strong> BoM flattening — "a lot of work" when
+    done by hand for every downstream consumer — is one depth-agnostic traversal over the
+    hierarchy. It reproduced the hand-flattened ERP export exactly, down to 1083.5188 kg
+    of PET chips per tonne of fabric through two nested levels.
+  </p>
+  <p>
+    <strong>The honest nuance.</strong> On flat lookups, the graph and plain SQL tied —
+    same effort, same results. The graph earns its keep where hierarchy and depth live:
+    composition, roll-ups, provenance chains. That nuance is now written into the
+    migration spec's acceptance criteria, so the engineering decision rests on where the
+    evidence actually diverged.
+  </p>
+
   <h2>Where it stands</h2>
   <p>
     The platform runs locally with a growing set of ingested studies across hydrogen,
-    steel, magnets, and carbon capture. Next steps are the graph layer proper —
-    moving from a relational store to Neo4j so dataset relationships are first-class —
-    and widening the evaluation set before opening contributions.
+    steel, magnets, and carbon capture. The graph layer passed its gate: the hypothesis
+    is confirmed and the Neo4j migration specs are re-scoped on the PoC evidence. Next
+    is the unified matching engine — the machinery that closes the cross-paper identity
+    gap the PoC made enumerable — then the production seam that lets the graph backend
+    replace the relational one behind a flag.
   </p>
   <p class="muted-note">
     Screenshots are static snapshots of the local platform; there is no live demo —
