@@ -13,4 +13,5 @@ Context (as of 2026-09-26, evening):
 - **Pending (user decision)**: footer email/LinkedIn are still `TODO` placeholders, visible live; give real values or say "remove them".
 - **Astro gotcha**: spaces at line breaks around inline tags (`<a>`, `<strong>`, `<em>`) are stripped at build — keep the space on the same line as the tag.
 - **Workflow**: user sometimes self-edits in VS Code — only commit/push after confirming their saves landed (`git diff`).
-- **Next slices**: openLCA clip embed; footer placeholders; canonical-flows section once the matching-engine design lands (brainstorm handed off in `~/Documents/lci-graph/handoff.md`); then Slice 3 = GreenClaim case study (source material in `~/Documents/env_bussing`).
+- **GreenClaim removed from the homepage project list** (2026-09-26, user request) — re-add when its case study exists (source material in `~/Documents/env_bussing`).
+- **Next slices**: openLCA clip embed; footer placeholders; canonical-flows section once the matching-engine design lands (brainstorm handed off in `~/Documents/lci-graph/handoff.md`); then the GreenClaim case study.
