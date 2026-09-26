@@ -52,12 +52,15 @@ const jsonldSnippet = `{
     <figcaption>Papers in the database — each with its DOI, system boundary, and background database preserved.</figcaption>
   </figure>
 
-  <h2>From paper to database</h2>
+  <h2>Part 1 — the extraction pipeline</h2>
   <p>
-    This is the core of it. On the left of the pipeline: a table buried on page S12 of a
-    paper's supplementary PDF. On the right: the same inventory as typed, unit-checked
-    rows in the database — every value traceable back to that table.
+    The pipeline's job is not just to find the numbers in a paper — it's to keep
+    everything that makes those numbers meaningful. On the left: a table buried on page
+    S12 of a supplementary PDF. On the right: the same inventory as typed, unit-checked
+    rows in the database, every value traceable back to that table.
   </p>
+
+  <h3>From paper to database</h3>
   <figure>
     <img src="/snapshots/lci-graph/paper-table-s6.png" alt="Table S6 from the paper's supplementary PDF: LCI data of CSTR 10 bar using serpentine, with columns for electricity, thermal energy, and carbon footprint per life-cycle stage." loading="lazy" />
     <figcaption>
@@ -75,7 +78,20 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
-  <h2>Design decisions</h2>
+  <h3>What has to survive extraction</h3>
+  <p>
+    <strong>Amounts are data, not text to clean up.</strong> Every amount is stored as a
+    verbatim string, so scientific notation survives — and an explicit zero ("PPS
+    granulate — 0 g/kg") is kept as an author claim (<em>we looked; it's nothing</em>),
+    not dropped as a missing value.
+  </p>
+  <p>
+    <strong>The reference flow is the denominator everything hangs on.</strong> Each
+    process is stored normalized to one unit of its declared reference flow ("per kg of
+    REM alloy"). When processes chain together, upstream inventories are rescaled by the
+    exchange ratio at read time — the scaled version is never stored, because that's
+    where conversion errors would live.
+  </p>
   <p>
     <strong>An inventory without its boundary conditions is not data, it's decoration.</strong> Every extracted dataset carries its methodology context — system boundary, LCIA
     method, allocation, source DOI — displayed next to the numbers wherever they
@@ -85,12 +101,32 @@ const jsonldSnippet = `{
     <img src="/snapshots/lci-graph/lci-inventory.png" alt="An extracted unit process: PEM electrolysis stack construction, with methodology context and a flow table mapped to ecoinvent datasets." loading="lazy" />
     <figcaption>An extracted unit process: flows mapped to canonical ecoinvent datasets, methodology context pinned to the top.</figcaption>
   </figure>
+
+  <h3>The stack: LLMs draft, rules decide, humans approve</h3>
+  <figure>
+    <img src="/snapshots/lci-graph/pipeline-stack.svg" alt="Pipeline diagram: input paper and supplements flow through a deterministic routing gate into multi-pass LLM extraction, then deterministic and LLM validation, then human review, then SQLite, then one-click exports." loading="lazy" />
+    <figcaption>
+      The pipeline, end to end. Blue is where the model runs, grey is deterministic code,
+      orange is the human. The model only ever drafts — the transitions between stages
+      are all rules.
+    </figcaption>
+  </figure>
   <p>
-    <strong>LLMs draft, rules decide, humans approve.</strong> Extraction is done by a
-    language model with structured prompts — no training set, because no two papers
-    format their tables alike. But nothing enters the database as fact: extractions
-    land as <em>pending review</em>, corrections are made in a review interface, and
-    those corrections feed back as extraction rules so the same mistake is not made twice.
+    <strong>Exactly one of three extraction paths runs per paper, and routing is a file
+    check, not a model call.</strong> Papers with supplements go supplement-first: every
+    document is parsed to text with a table registry (pdfplumber, python-docx, openpyxl),
+    a first pass reads the main paper for metadata and boundary context only, and a
+    second extracts the LCI tables in one structured call. PDF-only papers go vision:
+    the model reads the PDF pages directly — the corpus's gold standard, at 3–5× the
+    cost. A plain text path is the last-resort fallback.
+  </p>
+  <p>
+    <strong>Nothing the model says enters the database as fact.</strong> Extractions land
+    as <em>pending review</em>: deterministic checks run first (schema, inter-process
+    links, variable amounts resolved against the table registry, ghost processes
+    dropped), then a final LLM pass re-sends every table's JSON with its source table
+    and asks "does this match?" Corrections are made in a review interface — and those
+    corrections feed back as extraction rules, so the same mistake is not made twice.
   </p>
   <p>
     <strong>Accuracy is measured, not asserted.</strong> The pipeline is evaluated
@@ -102,12 +138,12 @@ const jsonldSnippet = `{
     <figcaption>Once flows are normalized to canonical materials, cross-study questions become answerable — e.g. which materials the literature actually covers.</figcaption>
   </figure>
 
-  <h2>Export to the tools you already use</h2>
+  <h3>Export to the tools you already use</h3>
   <p>
     A database nobody can get data out of is a roach motel. Every study and every
     individual process exports with one click to the formats practitioners actually
-    work in: <strong>openLCA JSON-LD</strong>, <strong>SimaPro CSV</strong>, <strong>ILCD</strong>
-    (GaBi), and <strong>EcoSpold2</strong>. The openLCA export
+    work in: <strong>openLCA JSON-LD</strong>, <strong>SimaPro CSV</strong>, <strong>ILCD</strong> (GaBi),
+    and <strong>EcoSpold2</strong>. The openLCA export
     is a standards-compliant JSON-LD package — processes, flows, units, and flow
     properties as linked entities:
   </p>
@@ -124,67 +160,176 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
-  <h2>The graph layer, put to a falsifiable test</h2>
+  <h2>Part 2 — the graph layer, put to a falsifiable test</h2>
   <p>
     The relational store works, but the data underneath it is graph-shaped: activities
-    connected by flows, with identity, provenance, and hierarchy. Every new comparison
-    feature kept dying on the relational shape. Still, "use a graph database" is also a
-    fashionable answer — so instead of migrating on faith, I framed it as a falsifiable
-    hypothesis and built a proof of concept designed to be able to fail.
+    connected by flows, with identity ("what substance is this?"), provenance ("which
+    paper says so?"), and hierarchy ("this part belongs to that product"). Every new
+    comparison feature kept dying on the relational shape. Still, "use a graph database"
+    is also a fashionable answer — so instead of migrating on faith, I framed it as a
+    falsifiable hypothesis and built a proof of concept that was designed to be able to fail.
   </p>
   <p>
-    The hypothesis: a vocabulary of five node labels and eight edge types can hold both
-    paper-extracted inventories <em>and</em> a client bill of materials without schema
-    additions, and makes the comparison and composition questions answerable as simple
-    traversals that are painful over the relational equivalent. The method was a
-    read-only projection — SQLite stays the system of record, a mechanical exporter
-    rebuilds a Neo4j projection, and if the hypothesis failed I'd delete it and nothing
-    was lost. The test was a six-question checklist run on real data: three papers on
-    rare-earth magnet recycling, plus a real client BoM (a SAP export for a polyester
-    knit fabric).
+    The hypothesis: a labeled-property-graph vocabulary of five node labels
+    (Activity, Exchange, Material, Dataset, Source) and eight edge types can hold both
+    paper-extracted inventories <em>and</em> an industrial bill of materials without schema
+    additions, and turns the comparison and composition questions into simple traversals
+    that are painful over the relational equivalent. Four sub-claims made it falsifiable:
+  </p>
+  <p>
+    <strong>H1 — the vocabulary is sufficient.</strong> Both worlds represented
+    faithfully, or a sixth node label / ninth edge type has to appear.
+  </p>
+  <p>
+    <strong>H2 — identity is one problem.</strong> Cross-paper matching ("same
+    electricity, three papers") and intra-study linkage are both missing edges of the
+    same type, closable by one engine — falsified if either world needs special-casing.
+  </p>
+  <p>
+    <strong>H3 — roll-up works.</strong> A study's internal flows cancel and its boundary
+    exchanges sum to a correct black-box view, with chain math computed at read time —
+    falsified by disagreeing with a hand-calculated roll-up.
+  </p>
+  <p>
+    <strong>H4 — the graph pulls its weight.</strong> The test questions take materially
+    less effort than their SQL equivalents — falsified, honestly, if they don't.
+  </p>
+  <h3>The vocabulary</h3>
+  <p>
+    The heart of the vocabulary is bipartite — <strong>Activities</strong> (things that
+    happen) and <strong>Exchanges</strong> (quantified stuff crossing their boundary).
+    Exchange is a first-class node for a structural reason: in a property graph, edges
+    can't have edges — and provenance, dataset mapping, and canonical identity all need
+    something to attach to. Around that heart: a <strong>Material</strong> library for
+    identity, <strong>Dataset</strong> for background references, and <strong>Source</strong> so
+    every node knows where it came from.
   </p>
   <figure>
-    <img src="/snapshots/lci-graph/bom-graph-projection.png" alt="Neo4j graph view of the client bill of materials: three assembly levels (orange), twelve leaf exchanges (yellow), and eleven canonical materials, connected by PART_OF, CONSUMES, and INSTANCE_OF edges." loading="lazy" />
+    <img src="/snapshots/lci-graph/graph-schema.svg" alt="Graph schema diagram: Activity and Exchange as the bipartite heart, connected by PRODUCES, CONSUMES, and FEEDS edges; Exchange points to Material via INSTANCE_OF, to Dataset via FROM_DATASET, and everything points to Source via SOURCED_FROM." loading="lazy" />
     <figcaption>
-      The client BoM living in the same graph as the paper world: three assembly levels,
+      The v0 vocabulary. Grounded in two published approaches (LCIKG, GraphDLCA) and one
+      decision that shaped everything: Exchange-as-node.
+    </figcaption>
+  </figure>
+
+  <h3>A real paper in the vocabulary</h3>
+  <p>
+    This is an actual extraction redrawn in the vocabulary — a study on NdFeB magnet
+    recycling, mapped from the live database. Two design surfaces show up immediately.
+    The provider's output and the consumer's input are the same stuff under different
+    strings ("milled magnet powder (ca 200 µm)" vs "cleaned, demagnetized, ball-milled
+    EOL magnet") — so intra-study linkage and cross-paper identity are one matching
+    problem, not two. And the 6.45 kg on the chain link is where the denominators
+    change: upstream amounts are per kg of powder, downstream per kg of alloy, so
+    roll-up math has to multiply through the conversion at read time.
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/magnet-mapping.svg" alt="Instance diagram of the magnet recycling study: pre-treatment and electrolysis activities connected through exchanges, with the FEEDS chain link carrying the 6.45 kg conversion, an electricity exchange pointing to the canonical Electricity material and its background dataset, variant edges, and provenance edges to the source paper." loading="lazy" />
+    <figcaption>
+      Study 34 in the graph: two unit processes, their boundary exchanges, the chain
+      link, the canonical-material join, and the scenario-variant edge — all from one
+      supplementary table, all traceable.
+    </figcaption>
+  </figure>
+
+  <h3>The test setup</h3>
+  <p>
+    <strong>The architecture is a read-only projection, not a migration.</strong> SQLite
+    stays the system of record — the LLM extraction pipeline, the evaluation harness, and
+    the web app never touch the graph. A mechanical exporter rebuilds a Neo4j projection
+    from it, and if the hypothesis failed I'd delete the projection and nothing was lost:
+  </p>
+  <pre>papers / ERP ─► extraction pipeline ─► SQLite (system of record)
+                                             │  exporter: 1:1, full rebuild
+                                             ▼
+                                       Neo4j 5 (Docker)
+                                             │
+                                             ▼
+                              Cypher checklist + hand-check scripts</pre>
+  <p>
+    Two decisions made the exporter boring, which was the point. First: exchanges are
+    first-class nodes (<strong>Exchange-as-node</strong>), so every row type in the
+    relational schema has exactly one graph counterpart — the mapping is 1:1 and the
+    exporter is ≈180 lines with no judgment calls. Second: <strong>full rebuild,
+    always</strong> — no incremental sync, no migration logic, the
+    projection is disposable by design. The engine is Neo4j 5 in Docker, the production
+    target in the specs and the engine both grounding papers used; an embedded Cypher
+    engine was the named fallback if infra friction appeared — the vocabulary and the
+    queries wouldn't change.
+  </p>
+  <p>
+    <strong>The test was a six-question checklist run on real data</strong> — three
+    papers on rare-earth magnet recycling, plus an industrial BoM (an ERP export for a
+    polyester knit fabric, three hierarchy levels deep). Two disciplines kept it honest.
+    Every answer that could be checked by hand, was: the graph's numbers were diffed
+    against hand-calculated results computed independently from SQLite and the ERP
+    spreadsheet. And the falsification clause was real: I wrote and ran SQL versions of
+    the checklist side-by-side, because "SQL is equally easy" was a valid outcome.
+  </p>
+  <h3>Results</h3>
+  <figure>
+    <img src="/snapshots/lci-graph/bom-graph-projection.png" alt="Neo4j graph view of an industrial bill of materials: three assembly levels (orange), twelve leaf exchanges (yellow), and eleven canonical materials, connected by PART_OF, CONSUMES, and INSTANCE_OF edges." loading="lazy" />
+    <figcaption>
+      An industrial BoM living in the same graph as the paper world: three assembly levels,
       twelve leaf exchanges, eleven canonical materials. The disperse dye at the top
       is <em>one</em> node consumed by two process steps — in the spreadsheet it's two rows
       joined only by a human reading the article number.
     </figcaption>
   </figure>
   <p>
-    <strong>The vocabulary held.</strong> Both worlds — academic LCIs and an ERP-sourced
-    BoM — were represented with zero new node labels and zero new edge types, and every
-    node traces back to its source.
+    <strong>The vocabulary held (H1).</strong> Both worlds — academic LCIs and an
+    ERP-sourced BoM — were represented with zero new node labels and zero new edge
+    types, and every node traces back to its source: 100% provenance completeness.
+    Suppliers rode along as edge properties, and the SAP article numbers gave identity
+    links for free — no fuzzy matching in the ERP world at all.
   </p>
   <p>
-    <strong>The roll-up math was checked by hand.</strong> Collapsing a study to one
-    black box (internal flows cancel, boundary flows sum, quantities rescale along the
-    chain) matched a hand-calculated roll-up exactly, for all eight scenario variants of
-    the study — including the variants where the chain's conversion denominator changes.
+    <strong>The identity gap became enumerable (H2).</strong> One study's electricity
+    was fragmented across seven process-specific material nodes — 28 exchanges — while
+    the other two papers shared a single canonical electricity node. In the graph that
+    gap is one query's worth of missing identity edges, closable by a single matching
+    engine with no per-study special-casing; in the relational store it was invisible
+    except by eye.
   </p>
   <p>
-    <strong>Flattening became a query.</strong> BoM flattening — "a lot of work" when
-    done by hand for every downstream consumer — is one depth-agnostic traversal over the
-    hierarchy. It reproduced the hand-flattened ERP export exactly, down to 1083.5188 kg
-    of PET chips per tonne of fabric through two nested levels.
+    <strong>The roll-up math was checked by hand (H3).</strong> Collapsing a study to
+    one black box — internal flows cancel, boundary flows sum, quantities rescale along
+    the chain — matched a hand-calculated roll-up exactly, for all eight scenario
+    variants of the study, including the variants where the chain's conversion
+    denominator changes mid-chain. Writing the query surfaced a real design rule: a
+    strict black-box must cancel <em>both</em> sides of an internal link, or the
+    provider's reference product leaks into the boundary.
   </p>
   <p>
-    <strong>The honest nuance.</strong> On flat lookups, the graph and plain SQL tied —
-    same effort, same results. The graph earns its keep where hierarchy and depth live:
-    composition, roll-ups, provenance chains. That nuance is now written into the
-    migration spec's acceptance criteria, so the engineering decision rests on where the
-    evidence actually diverged.
+    <strong>The honest nuance (H4).</strong> On flat lookups, the graph and plain SQL
+    tied — near-identical line counts, same results, recorded honestly. The divergence
+    showed up where hierarchy lives: flattening the BoM — "a lot of work" when done by
+    hand for every downstream consumer — is one depth-agnostic traversal
+    (<code>PART_OF*1..</code> with a running quantity product), reproducing the
+    hand-flattened ERP export exactly, down to 1083.5188 kg of PET chips per tonne of
+    fabric through two nested levels. The SQL equivalent is a recursive CTE carrying the
+    same running product. So the graph earns its keep on composition, roll-ups, and
+    provenance chains — and that nuance is load-bearing: the migration spec's acceptance
+    criteria are anchored on those hierarchical queries, not on corpus-scale lookups
+    where the graph can't justify itself.
+  </p>
+  <p>
+    <strong>The limits, recorded.</strong> One industrial BoM (n=1, textiles) with zero
+    material overlap against the paper corpus — the cross-world join is machinery-tested,
+    not data-tested. Multi-hop roll-up is untested, because every chain in the corpus is
+    depth-1. And line-count is a weak proxy for effort. All three are written into the
+    specs as open risks, not swept under the rug.
   </p>
 
   <h2>Where it stands</h2>
   <p>
-    The platform runs locally with a growing set of ingested studies across hydrogen,
-    steel, magnets, and carbon capture. The graph layer passed its gate: the hypothesis
-    is confirmed and the Neo4j migration specs are re-scoped on the PoC evidence. Next
-    is the unified matching engine — the machinery that closes the cross-paper identity
-    gap the PoC made enumerable — then the production seam that lets the graph backend
-    replace the relational one behind a flag.
+    The gate verdict was <strong>GO</strong>: the hypothesis is confirmed — H4 in its
+    nuanced form — and the migration specs were re-scoped on the evidence. The migration
+    is now defined as the same full-rebuild exporter (the projection stays disposable,
+    and match-decision history stays relational). Next is the unified matching engine —
+    the machinery that closes the 28-exchange identity gap the PoC enumerated, and that
+    will later join BoM materials to paper materials — then the production seam that
+    lets the graph backend replace the relational one behind a flag.
   </p>
   <p class="muted-note">
     Screenshots are static snapshots of the local platform; there is no live demo —

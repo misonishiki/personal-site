@@ -1,0 +1,96 @@
+<svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a958c"/>
+    </marker>
+  </defs>
+  <rect width="960" height="470" fill="#141312"/>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="560" y="18" width="10" height="10" rx="2" fill="#6b9dff"/>
+    <text x="576" y="27" fill="#9a958c">LLM pass</text>
+    <rect x="660" y="18" width="10" height="10" rx="2" fill="#9a958c"/>
+    <text x="676" y="27" fill="#9a958c">deterministic</text>
+    <rect x="790" y="18" width="10" height="10" rx="2" fill="#d8a24a"/>
+    <text x="806" y="27" fill="#9a958c">human</text>
+  </g>
+
+  <!-- ROW 1 -->
+  <!-- input -->
+  <g>
+    <rect x="20" y="70" width="180" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="34" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Input</text>
+    <text x="34" y="118" fill="#9a958c" font-size="11.5">paper PDF +</text>
+    <text x="34" y="134" fill="#9a958c" font-size="11.5">supplements</text>
+    <text x="34" y="156" fill="#7a766e" font-size="10.5">pdf · docx · xlsx</text>
+  </g>
+  <!-- routing -->
+  <g>
+    <rect x="250" y="70" width="200" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="250" y="70" width="200" height="6" rx="3" fill="#9a958c"/>
+    <text x="264" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Routing gate</text>
+    <text x="264" y="118" fill="#9a958c" font-size="11.5">file-based, no model</text>
+    <text x="264" y="140" fill="#7a766e" font-size="10.5">supplements? → text path</text>
+    <text x="264" y="155" fill="#7a766e" font-size="10.5">PDF-only → vision path</text>
+    <text x="264" y="170" fill="#7a766e" font-size="10.5">0 processes? → fallback</text>
+  </g>
+  <!-- extraction passes -->
+  <g>
+    <rect x="500" y="46" width="440" height="168" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="500" y="46" width="440" height="6" rx="3" fill="#6b9dff"/>
+    <text x="514" y="72" fill="#e8e6e3" font-size="13" font-weight="600">Extraction — multi-pass LLM</text>
+    <text x="514" y="96" fill="#9a958c" font-size="11.5">Pass 1 — read the main paper: metadata, system boundary,</text>
+    <text x="514" y="111" fill="#9a958c" font-size="11.5">functional unit. No LCI numbers yet.</text>
+    <text x="514" y="135" fill="#9a958c" font-size="11.5">Pass 2 — extract the LCI tables: structured JSON,</text>
+    <text x="514" y="150" fill="#9a958c" font-size="11.5">amounts kept as verbatim strings.</text>
+    <text x="514" y="174" fill="#7a766e" font-size="10.5">no training set — papers don't format their tables alike;</text>
+    <text x="514" y="189" fill="#7a766e" font-size="10.5">structured prompts + parsing (pdfplumber · docx · openpyxl)</text>
+  </g>
+
+  <!-- ROW 2 (right to left) -->
+  <!-- validate -->
+  <g>
+    <rect x="500" y="262" width="440" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="500" y="262" width="220" height="6" rx="3" fill="#9a958c"/>
+    <rect x="720" y="262" width="220" height="6" rx="3" fill="#6b9dff"/>
+    <text x="514" y="288" fill="#e8e6e3" font-size="13" font-weight="600">Validation — rules, then model</text>
+    <text x="514" y="310" fill="#9a958c" font-size="11.5">deterministic: schema check · link processes · resolve</text>
+    <text x="514" y="325" fill="#9a958c" font-size="11.5">variable amounts · drop ghost processes</text>
+    <text x="514" y="349" fill="#9a958c" font-size="11.5">Pass 2.5 (LLM): every table's JSON re-sent with the</text>
+    <text x="514" y="364" fill="#9a958c" font-size="11.5">source table — "does this match?" Corrections applied.</text>
+  </g>
+  <!-- review -->
+  <g>
+    <rect x="250" y="262" width="200" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="250" y="262" width="200" height="6" rx="3" fill="#d8a24a"/>
+    <text x="264" y="288" fill="#e8e6e3" font-size="13" font-weight="600">Human review</text>
+    <text x="264" y="310" fill="#9a958c" font-size="11.5">nothing enters as fact:</text>
+    <text x="264" y="325" fill="#9a958c" font-size="11.5">pending → approved</text>
+    <text x="264" y="349" fill="#7a766e" font-size="10.5">corrections feed back as</text>
+    <text x="264" y="364" fill="#7a766e" font-size="10.5">extraction rules</text>
+  </g>
+  <!-- store -->
+  <g>
+    <rect x="20" y="262" width="180" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="20" y="262" width="180" height="6" rx="3" fill="#9a958c"/>
+    <text x="34" y="288" fill="#e8e6e3" font-size="13" font-weight="600">SQLite</text>
+    <text x="34" y="310" fill="#9a958c" font-size="11.5">system of record</text>
+    <text x="34" y="332" fill="#7a766e" font-size="10.5">+ golden-set eval harness</text>
+    <text x="34" y="347" fill="#7a766e" font-size="10.5">+ web app (browse, review,</text>
+    <text x="34" y="362" fill="#7a766e" font-size="10.5">export)</text>
+  </g>
+  <!-- exports strip -->
+  <g>
+    <rect x="20" y="416" width="920" height="40" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="36" y="441" fill="#9a958c" font-size="11.5">One-click exports:  openLCA JSON-LD · SimaPro CSV · ILCD · EcoSpold2</text>
+  </g>
+
+  <!-- arrows -->
+  <line x1="200" y1="130" x2="246" y2="130" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="450" y1="130" x2="496" y2="130" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M720,214 L720,258" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+  <line x1="500" y1="322" x2="454" y2="322" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="250" y1="322" x2="204" y2="322" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M110,382 L110,412" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)" fill="none"/>
+</svg>

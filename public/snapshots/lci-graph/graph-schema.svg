@@ -1,0 +1,80 @@
+<svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a958c"/>
+    </marker>
+  </defs>
+  <rect width="960" height="520" fill="#141312"/>
+
+  <!-- Activity -->
+  <g>
+    <rect x="60" y="180" width="230" height="140" rx="6" fill="#1b1a18" stroke="#6b9dff" stroke-width="1.5"/>
+    <text x="76" y="206" fill="#e8e6e3" font-size="14" font-weight="600">Activity</text>
+    <text x="76" y="224" fill="#9a958c" font-size="11">things that happen — a unit</text>
+    <text x="76" y="238" fill="#9a958c" font-size="11">process, stage, assembly step</text>
+    <text x="76" y="264" fill="#7a766e" font-size="10.5">name · location · technology level</text>
+    <text x="76" y="279" fill="#7a766e" font-size="10.5">temporal scope · scenario params</text>
+    <text x="76" y="304" fill="#5a564f" font-size="10">↩ PART_OF · VARIANT_OF (self-edges)</text>
+  </g>
+
+  <!-- Exchange -->
+  <g>
+    <rect x="430" y="170" width="240" height="160" rx="6" fill="#1b1a18" stroke="#6b9dff" stroke-width="1.5"/>
+    <text x="446" y="196" fill="#e8e6e3" font-size="14" font-weight="600">Exchange</text>
+    <text x="446" y="214" fill="#9a958c" font-size="11">one quantified flow line, into or</text>
+    <text x="446" y="228" fill="#9a958c" font-size="11">out of an activity</text>
+    <text x="446" y="254" fill="#7a766e" font-size="10.5">amount (verbatim string) · unit</text>
+    <text x="446" y="269" fill="#7a766e" font-size="10.5">direction · kind (product / waste /</text>
+    <text x="446" y="284" fill="#7a766e" font-size="10.5">emission / resource / avoided)</text>
+    <text x="446" y="299" fill="#7a766e" font-size="10.5">is_reference — the denominator</text>
+  </g>
+
+  <!-- Material -->
+  <g>
+    <rect x="770" y="40" width="180" height="104" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="784" y="64" fill="#e8e6e3" font-size="13" font-weight="600">Material</text>
+    <text x="784" y="82" fill="#9a958c" font-size="10.5">canonical identity —</text>
+    <text x="784" y="95" fill="#9a958c" font-size="10.5">the recurring library</text>
+    <text x="784" y="116" fill="#7a766e" font-size="10">name · aliases · cas · formula</text>
+  </g>
+
+  <!-- Dataset -->
+  <g>
+    <rect x="770" y="200" width="180" height="100" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="784" y="224" fill="#e8e6e3" font-size="13" font-weight="600">Dataset</text>
+    <text x="784" y="242" fill="#9a958c" font-size="10.5">background reference</text>
+    <text x="784" y="255" fill="#9a958c" font-size="10.5">(ecoinvent etc.)</text>
+    <text x="784" y="276" fill="#7a766e" font-size="10">name · db · version · geo</text>
+  </g>
+
+  <!-- Source -->
+  <g>
+    <rect x="770" y="360" width="180" height="104" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="784" y="384" fill="#e8e6e3" font-size="13" font-weight="600">Source</text>
+    <text x="784" y="402" fill="#9a958c" font-size="10.5">provenance — paper,</text>
+    <text x="784" y="415" fill="#9a958c" font-size="10.5">EPD, ERP export</text>
+    <text x="784" y="436" fill="#7a766e" font-size="10">doi · table ref · confidence</text>
+  </g>
+
+  <!-- edges: Activity <-> Exchange -->
+  <path d="M290,215 C340,200 380,200 426,208" stroke="#9a958c" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="318" y="192" fill="#9a958c" font-size="10.5">PRODUCES</text>
+  <path d="M290,250 C340,250 380,252 426,255" stroke="#9a958c" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="318" y="242" fill="#9a958c" font-size="10.5">CONSUMES</text>
+  <path d="M430,310 C370,330 340,330 294,315" stroke="#9a958c" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="330" y="340" fill="#9a958c" font-size="10.5">FEEDS — technosphere link (the chain)</text>
+
+  <!-- edges: Exchange -> Material / Dataset / Source -->
+  <path d="M670,190 C710,160 730,130 766,100" stroke="#9a958c" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="700" y="130" fill="#9a958c" font-size="10.5">INSTANCE_OF</text>
+  <text x="700" y="143" fill="#7a766e" font-size="9.5">the cross-paper join</text>
+  <line x1="670" y1="250" x2="766" y2="250" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="682" y="240" fill="#9a958c" font-size="10.5">FROM_DATASET</text>
+  <path d="M670,310 C710,340 730,370 766,400" stroke="#9a958c" stroke-width="1.5" fill="none" marker-end="url(#arr2)"/>
+  <text x="690" y="366" fill="#9a958c" font-size="10.5">SOURCED_FROM</text>
+  <path d="M175,320 C175,460 600,460 766,425" stroke="#5a564f" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#arr2)"/>
+  <text x="380" y="452" fill="#5a564f" font-size="10.5">SOURCED_FROM — every node knows where it came from</text>
+
+  <!-- caption -->
+  <text x="30" y="500" fill="#7a766e" font-size="11">Five node labels, eight edge types, everything else as properties. Blue outline = the bipartite heart: activities and their exchanges.</text>
+</svg>
