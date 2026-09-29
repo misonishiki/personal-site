@@ -86,11 +86,12 @@
 
   <!-- FEEDS back -->
   <path d="M390,300 C300,290 200,280 155,246" stroke="#d8a24a" stroke-width="1.5" fill="none" marker-end="url(#arr3)"/>
-  <text x="196" y="272" fill="#d8a24a" font-size="10.5">FEEDS — the chain link</text>
+  <text x="196" y="260" fill="#d8a24a" font-size="10.5">FEEDS — the chain link</text>
 
   <!-- naming mismatch -->
   <path d="M520,226 L520,266" stroke="#5a564f" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arr3d)" fill="none"/>
-  <text x="532" y="250" fill="#5a564f" font-size="10.5">same stuff, different strings — linkage is a matching problem</text>
+  <text x="532" y="244" fill="#5a564f" font-size="10.5">same stuff, different strings —</text>
+  <text x="532" y="258" fill="#5a564f" font-size="10.5">linkage is a matching problem</text>
 
   <!-- INSTANCE_OF / FROM_DATASET -->
   <line x1="650" y1="62" x2="726" y2="62" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr3)"/>
@@ -105,7 +106,7 @@
   <!-- SOURCED_FROM dashed -->
   <path d="M520,506 C520,540 640,530 726,518" stroke="#5a564f" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#arr3d)"/>
   <path d="M155,472 C155,545 600,545 726,522" stroke="#5a564f" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#arr3d)"/>
-  <text x="380" y="556" fill="#5a564f" font-size="10.5">SOURCED_FROM — every node traces back to the paper</text>
+  <text x="380" y="573" fill="#5a564f" font-size="10.5">SOURCED_FROM — every node traces back to the paper</text>
 
   <!-- conversion callout -->
   <text x="30" y="28" fill="#7a766e" font-size="11">Study 34 — NdFeB magnet recycling. Upstream</text>

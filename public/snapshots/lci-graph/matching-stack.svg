@@ -1,0 +1,103 @@
+<svg viewBox="0 0 960 440" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a958c"/>
+    </marker>
+  </defs>
+  <rect width="960" height="440" fill="#141312"/>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="560" y="18" width="10" height="10" rx="2" fill="#6b9dff"/>
+    <text x="576" y="27" fill="#9a958c">LLM proposes</text>
+    <rect x="680" y="18" width="10" height="10" rx="2" fill="#9a958c"/>
+    <text x="696" y="27" fill="#9a958c">deterministic</text>
+    <rect x="800" y="18" width="10" height="10" rx="2" fill="#d8a24a"/>
+    <text x="816" y="27" fill="#9a958c">human</text>
+  </g>
+
+  <!-- input flow -->
+  <g>
+    <rect x="20" y="120" width="170" height="150" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <text x="34" y="146" fill="#e8e6e3" font-size="13" font-weight="600">New flow in</text>
+    <text x="34" y="168" fill="#9a958c" font-size="11.5">raw name</text>
+    <text x="34" y="186" fill="#9a958c" font-size="11.5">dataset reference</text>
+    <text x="34" y="204" fill="#9a958c" font-size="11.5">exchange class</text>
+    <text x="34" y="232" fill="#7a766e" font-size="10.5">input · waste · emission ·</text>
+    <text x="34" y="247" fill="#7a766e" font-size="10.5">product · avoided credit</text>
+  </g>
+
+  <!-- evidence channels -->
+  <g>
+    <rect x="240" y="60" width="230" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="240" y="60" width="230" height="6" rx="3" fill="#9a958c"/>
+    <text x="254" y="86" fill="#e8e6e3" font-size="13" font-weight="600">Evidence channels</text>
+    <text x="254" y="108" fill="#9a958c" font-size="11.5">name — normalize, unicode-fold,</text>
+    <text x="254" y="123" fill="#9a958c" font-size="11.5">curated synonyms (Co₂ ~ Co2)</text>
+    <text x="254" y="147" fill="#9a958c" font-size="11.5">dataset — normalized key</text>
+    <text x="254" y="168" fill="#7a766e" font-size="10.5">disagreement = proxy detector</text>
+  </g>
+
+  <!-- memory lookup -->
+  <g>
+    <rect x="240" y="220" width="230" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="240" y="220" width="230" height="6" rx="3" fill="#9a958c"/>
+    <text x="254" y="246" fill="#e8e6e3" font-size="13" font-weight="600">Memory lookup</text>
+    <text x="254" y="268" fill="#9a958c" font-size="11.5">aliases (name channel)</text>
+    <text x="254" y="286" fill="#9a958c" font-size="11.5">dataset → material map</text>
+    <text x="254" y="304" fill="#9a958c" font-size="11.5">(name, dataset) pair cache</text>
+    <text x="254" y="326" fill="#7a766e" font-size="10.5">derived state, rebuilt from the log</text>
+  </g>
+
+  <!-- exact hit -->
+  <g>
+    <rect x="520" y="60" width="200" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="520" y="60" width="200" height="6" rx="3" fill="#9a958c"/>
+    <text x="534" y="86" fill="#e8e6e3" font-size="13" font-weight="600">Key hit → auto-match</text>
+    <text x="534" y="108" fill="#9a958c" font-size="11.5">deterministic, auditable,</text>
+    <text x="534" y="123" fill="#9a958c" font-size="11.5">identical every time</text>
+    <text x="534" y="147" fill="#7a766e" font-size="10.5">silent only for keys backed by</text>
+    <text x="534" y="162" fill="#7a766e" font-size="10.5">confirmed decisions</text>
+  </g>
+
+  <!-- no key: human, LLM proposes -->
+  <g>
+    <rect x="520" y="220" width="200" height="150" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="520" y="220" width="120" height="6" rx="3" fill="#d8a24a"/>
+    <rect x="640" y="220" width="80" height="6" rx="3" fill="#6b9dff"/>
+    <text x="534" y="246" fill="#e8e6e3" font-size="13" font-weight="600">No key → human queue</text>
+    <text x="534" y="268" fill="#9a958c" font-size="11.5">Flow Mapping buckets, grouped</text>
+    <text x="534" y="283" fill="#9a958c" font-size="11.5">by dataset key + exchange class</text>
+    <text x="534" y="307" fill="#9a958c" font-size="11.5">Dedup tab for duplicate</text>
+    <text x="534" y="322" fill="#9a958c" font-size="11.5">canonicals</text>
+    <text x="534" y="346" fill="#7a766e" font-size="10.5">LLM may propose candidates;</text>
+    <text x="534" y="361" fill="#7a766e" font-size="10.5">never decides identity</text>
+  </g>
+
+  <!-- write path -->
+  <g>
+    <rect x="770" y="130" width="170" height="160" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="770" y="130" width="170" height="6" rx="3" fill="#d8a24a"/>
+    <text x="784" y="156" fill="#e8e6e3" font-size="13" font-weight="600">One write path</text>
+    <text x="784" y="178" fill="#9a958c" font-size="11.5">decision appended to the</text>
+    <text x="784" y="193" fill="#9a958c" font-size="11.5">log, attributed</text>
+    <text x="784" y="217" fill="#9a958c" font-size="11.5">aliases + maps update;</text>
+    <text x="784" y="232" fill="#9a958c" font-size="11.5">merges log decisions too</text>
+    <text x="784" y="256" fill="#7a766e" font-size="10.5">never asked twice —</text>
+    <text x="784" y="271" fill="#7a766e" font-size="10.5">coverage compounds</text>
+  </g>
+
+  <!-- edges -->
+  <g stroke="#9a958c" stroke-width="1.5" fill="none">
+    <path d="M190,165 L236,120" marker-end="url(#arr)"/>
+    <path d="M190,225 L236,255" marker-end="url(#arr)"/>
+    <path d="M470,120 L516,120" marker-end="url(#arr)"/>
+    <path d="M470,280 L516,280" marker-end="url(#arr)"/>
+    <path d="M470,150 C495,150 495,250 516,250" marker-end="url(#arr)"/>
+    <path d="M720,120 C745,120 745,170 766,180" marker-end="url(#arr)"/>
+    <path d="M720,290 L766,245" marker-end="url(#arr)"/>
+    <!-- memory rebuild loop -->
+    <path d="M855,290 C855,410 355,410 355,344" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+  </g>
+  <text x="480" y="416" fill="#7a766e" font-size="10.5" text-anchor="middle">memory is rebuilt from the decision log — every correction makes the next paper easier</text>
+</svg>

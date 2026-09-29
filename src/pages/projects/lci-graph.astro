@@ -29,7 +29,16 @@ const jsonldSnippet = `{
   <h1>LCI·GRAPH</h1>
   <p class="tagline">An open-source pipeline that turns the LCA literature into a queryable inventory database.</p>
 
-  <h2>The problem</h2>
+  <nav class="toc" aria-label="Contents">
+    <a href="#the-problem">The problem</a>
+    <a href="#what-it-does">What it does</a>
+    <a href="#part-1">Part 1 — extraction</a>
+    <a href="#interlude">Interlude — identity</a>
+    <a href="#part-2">Part 2 — graph layer</a>
+    <a href="#where-it-stands">Where it stands</a>
+  </nav>
+
+  <h2 id="the-problem">The problem</h2>
   <p>
     Some of the best life-cycle inventory data in the field is published in academic
     papers — and then effectively buried. The numbers live in PDF tables and
@@ -39,7 +48,7 @@ const jsonldSnippet = `{
     over and over, privately, and throw it away.
   </p>
 
-  <h2>What it does</h2>
+  <h2 id="what-it-does">What it does</h2>
   <p>
     LCI·GRAPH ingests a paper and its supplements, extracts the inventory tables,
     links every flow to a canonical dataset, and stores the result in a database you
@@ -48,11 +57,19 @@ const jsonldSnippet = `{
   </p>
 
   <figure>
+    <img src="/snapshots/lci-graph/overview-stack.svg" alt="The whole system, top to bottom: sources (papers plus supplements, and industrial bills of materials) feed an extraction layer where the model drafts and deterministic rules decide; a SQLite store holds studies, processes, flows, materials and an append-only decision log; an identity layer auto-matches on memory keys and queues genuine misses for human review, with every decision flowing back into memory; a disposable graph projection sits on top; and outputs are the web platform, exports, and cross-paper meta-analysis." loading="lazy" />
+    <figcaption>
+      The whole machine, top to bottom. Each layer below gets its own close-up:
+      extraction (Part 1), identity (Interlude), graph (Part 2).
+    </figcaption>
+  </figure>
+
+  <figure>
     <img src="/snapshots/lci-graph/studies-browser.png" alt="LCI·GRAPH study browser: a list of ingested papers with DOI, system boundary, background database, and review status." loading="lazy" />
     <figcaption>Papers in the database — each with its DOI, system boundary, and background database preserved.</figcaption>
   </figure>
 
-  <h2>Part 1 — the extraction pipeline</h2>
+  <h2 id="part-1">Part 1 — the extraction pipeline</h2>
   <p>
     The pipeline's job is not just to find the numbers in a paper — it's to keep
     everything that makes those numbers meaningful. On the left: a table buried on page
@@ -160,7 +177,101 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
-  <h2>Part 2 — the graph layer, put to a falsifiable test</h2>
+  <h2 id="interlude">Interlude — normalizing to canonical materials: how corrections become memory</h2>
+  <p>
+    Between extraction and the graph layer sits a less glamorous problem that decides
+    whether any of the comparison features work at all: <strong>identity</strong>. "What
+    substance is this exchange?" The naive answer — normalize the flow's name, and on
+    a miss <em>create a new material</em> — is a fragmentation generator. After twelve
+    studies the database held <strong>616 materials, of which only 12 were shared across
+    studies</strong>. One study's electricity was shattered across seven process-specific
+    nodes ("Ball milling — electricity consumption", …) — 28 exchanges — while two
+    other papers shared a single canonical <em>Electricity</em>. Cross-paper comparison
+    is only as good as this join.
+  </p>
+  <p>
+    The fix rests on three choices. <strong>Read both channels of evidence:</strong> the
+    free-text name <em>and</em> the linked background dataset — "Energy consumption
+    during electrolysis" shares zero words with <em>Electricity</em>, but its dataset
+    reference says <code>market for electricity, medium voltage</code>. <strong>Lookup,
+    not retrieval:</strong> with an exact key the right answer is deterministic code,
+    identical every time — embeddings have no concept of "exact hit, stop looking".
+    Only genuinely novel strings earn an LLM, and there the model <em>proposes</em> candidates;
+    code owns identity. <strong>Corrections become memory:</strong> every human decision is an event in an append-only log, and memory
+    is rebuilt from it — aliases on materials, a dataset→material map. The channels
+    teach each other: a flow matched via its dataset writes its name as an alias, so
+    the next paper using that name matches even without a dataset. And on a genuine
+    miss the flow is queued for review instead of minting a new material — the one
+    change that stops fragmentation growing.
+  </p>
+  <p>
+    One subtlety: <strong>a dataset is not always an identity.</strong> Papers model
+    substances with proxy datasets — one study's <em>neodymium fluoride</em> rides on a
+    neodymium <em>oxide</em> dataset, deliberately. So identity follows the name
+    channel; the dataset channel is evidence; and disagreement between the two is the
+    proxy detector, routing the flow to a human with both votes shown.
+  </p>
+  <h3>The eval: simulate the memory before building the engine</h3>
+  <p>
+    With the decision log nearly empty (one human correction when this ran), a replay
+    eval had nothing to replay. What <em>could</em> run before writing any engine code
+    was a <strong>retrospective simulation</strong>: replay the corpus in ingest order,
+    grow the two-channel memory as the engine would, and measure what it would have
+    known — coverage potential, not correctness.
+  </p>
+  <pre>ingest-order replay of 1,039 exchanges, two-channel memory:
+  53.2%  exact (name, dataset) pair replay — mostly repeats within a study
+  10.3%  dataset channel — dataset string already seen in another paper
+   5.2%  name channel — alias seen before
+  31.3%  genuinely cold — no key fires; queue for a human
+
+electricity gap spot check:
+  all 28 orphaned exchanges share ONE normalized dataset key
+  ("electricity, medium voltage") — the same key backing canonical Electricity.
+  the dataset channel alone closes the entire enumerated gap.</pre>
+  <p>
+    Two-thirds of the corpus's exchanges were knowable in advance through channels
+    the matcher never read. The caveats mattered too: junk dataset strings ("not
+    specified") need a stoplist, a third of flows have no usable dataset reference at
+    all, and one dataset can legitimately back different materials — so the dataset
+    channel alone never gets to decide silently.
+  </p>
+
+  <h3>First contact with reality</h3>
+  <p>
+    Then the design met the corpus, in a first human review pass — and the corpus
+    taught back. The pass forced the tooling into existence: pending flows
+    pre-grouped into <strong>425 decision buckets</strong> by shared dataset key,
+    each with evidence-ranked canonical candidates. Twenty decisions later the
+    enumerated electricity gap was closed — all 28 exchanges now point at the
+    single canonical <em>Electricity</em> — and the review queue dropped from
+    1,148 to 1,013 links. Two lessons the design had missed, both now encoded:
+  </p>
+  <figure>
+    <img src="/snapshots/lci-graph/matching-examples.svg" alt="Two worked matching examples. Left: Co₂, Co2, and Carbon dioxide — three spellings, same emission class — caught by unicode-fold and the synonym table, merged into one canonical with the spellings kept as aliases. Right: silicon carbide consumption (input, market dataset), disposal (waste, treatment dataset), and recovered (avoided product, credit) share one normalized dataset key but are never decided together — buckets split by exchange class." loading="lazy" />
+    <figcaption>
+      Left — <strong>typography is an identity attack</strong>: three spellings of one
+      substance had become three materials. Nineteen such duplicate groups hid in the
+      corpus; the safe lenses (unicode-fold, curated synonyms) now auto-match at
+      ingest, and a merge keeps every absorbed spelling as an alias — never asked
+      twice. Right — <strong>an exchange's <em>role</em> is part of its
+      identity</strong>: consumption (a burden you buy), disposal (a burden you pay
+      for), and avoided product (a credit, the opposite sign) share a dataset key but
+      are different claims — buckets split by exchange class, so they are never
+      decided together.
+    </figcaption>
+  </figure>
+  <figure>
+    <img src="/snapshots/lci-graph/matching-stack.svg" alt="Matching-layer architecture: a new flow enters with raw name, dataset reference and exchange class; evidence channels feed a deterministic memory lookup (aliases, dataset map, pair cache rebuilt from the decision log); key hits auto-match, misses go to a human queue where an LLM may only propose; every decision goes through one write path that appends to the log and rebuilds the memory." loading="lazy" />
+    <figcaption>
+      The pipeline behind it. Grey is deterministic code, orange is the human,
+      blue is the model — which proposes candidates on a genuine miss but never
+      decides identity. Every correction flows through one write path into the
+      decision log, and memory is rebuilt from the log.
+    </figcaption>
+  </figure>
+
+  <h2 id="part-2">Part 2 — the graph layer, put to a falsifiable test</h2>
   <p>
     The relational store works, but the data underneath it is graph-shaped: activities
     connected by flows, with identity ("what substance is this?"), provenance ("which
@@ -321,18 +432,76 @@ const jsonldSnippet = `{
     specs as open risks, not swept under the rug.
   </p>
 
-  <h2>Where it stands</h2>
+  <h2 id="where-it-stands">Where it stands</h2>
   <p>
     The gate verdict was <strong>GO</strong>: the hypothesis is confirmed — H4 in its
     nuanced form — and the migration specs were re-scoped on the evidence. The migration
     is now defined as the same full-rebuild exporter (the projection stays disposable,
-    and match-decision history stays relational). Next is the unified matching engine —
-    the machinery that closes the 28-exchange identity gap the PoC enumerated, and that
-    will later join BoM materials to paper materials — then the production seam that
-    lets the graph backend replace the relational one behind a flag.
+    and match-decision history stays relational). The 28-exchange identity gap the PoC
+    enumerated is meanwhile closed — by the human pass through the new review tooling,
+    not yet by automation. Next is the unified matching engine, but its job has
+    changed shape: not "close the gap" — make the next pass mostly automatic, by
+    cashing in the coverage the simulation measured (two-thirds of exchanges knowable
+    in advance) against the decision log the passes are now accumulating. Then the
+    engine joins BoM materials to paper materials, and the production seam lets the
+    graph backend replace the relational one behind a flag.
   </p>
   <p class="muted-note">
     Screenshots are static snapshots of the local platform; there is no live demo —
     the database contains other people's published data, shown here for illustration.
   </p>
+<style>
+  /* Discreet table of contents, pinned top-left, follows scroll (scroll-spy).
+     Only shown when the viewport is wide enough that it can't collide with the
+     42rem centered column. */
+  .toc {
+    position: fixed;
+    top: 7rem;
+    left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    z-index: 5;
+  }
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0.45;
+    padding-left: 0.6rem;
+    border-left: 2px solid transparent;
+    transition: opacity 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { opacity: 0.9; }
+  .toc a.active {
+    opacity: 1;
+    color: var(--ink);
+    border-left-color: var(--accent);
+  }
+  @media (max-width: 74rem) {
+    .toc { display: none; }
+  }
+</style>
+
+<script>
+  // Scroll-spy: highlight the TOC entry of the section currently in view.
+  // (Scroll listener, not IntersectionObserver: fast scrolling can jump an h2
+  // clean across an observer band without ever intersecting it — the active
+  // entry would then stick on the wrong section.)
+  const tocLinks = [...document.querySelectorAll('.toc a')];
+  const byId = Object.fromEntries(tocLinks.map((a) => [a.hash.slice(1), a]));
+  const heads = [...document.querySelectorAll('h2[id]')];
+  const updateToc = () => {
+    let current = heads[0];
+    for (const h of heads) {
+      if (h.getBoundingClientRect().top <= window.innerHeight * 0.3) current = h;
+    }
+    tocLinks.forEach((a) => a.classList.remove('active'));
+    if (current) byId[current.id]?.classList.add('active');
+  };
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+</script>
+
 </Base>
