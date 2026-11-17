@@ -47,7 +47,7 @@ p { margin-bottom: 1rem; }
 .projects li { border-top: 1px solid var(--faint); padding: 1.25rem 0; }
 .projects li:last-child { border-bottom: 1px solid var(--faint); }
 .projects a, .projects strong { color: var(--ink); font-weight: 600; text-decoration: none; }
-.projects li > a::after { content: " →"; color: var(--accent); }
+.projects li > a::before { content: "→ "; color: var(--accent); }
 .projects a:hover { color: var(--accent); }
 .projects p { color: var(--muted); margin: 0.25rem 0 0; }
 
