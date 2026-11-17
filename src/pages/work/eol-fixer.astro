@@ -34,14 +34,14 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
 
   <h3>Finding the right material</h3>
   <ul>
-    <li><strong>Default material library variables.</strong> Datasets scoped to the desired database version (Ecoinvent and NMD) and end-of-life variable defaults per canonical material.</li>
+    <li><strong>Default material library variables.</strong> Datasets scoped to the desired database version (Ecoinvent and NMD) and end-of-life variable defaults per <span class="term" data-term="Canonical material">canonical material</span>.</li>
     <li><strong>Automatching.</strong> Based on input material and modeller-determined fates.</li>
     <li><strong>Enforced reasoning.</strong> When the modeller overrides an automatched value set, reasoning is required before the run continues. The reporting output stays complete, and no hours are lost recovering forgotten choices down the line.</li>
   </ul>
 
   <h3>Modelling you can defend</h3>
   <ul>
-    <li><strong>Complete parameter set.</strong> All parameters are generated, so nothing is left half-filled for the modeller to chase down later.</li>
+    <li><strong>Complete parameter set.</strong> All <span class="term" data-term="Parameters">parameters</span> are generated, so nothing is left half-filled for the modeller to chase down later.</li>
     <li><strong>Automatic biogenic carbon correction.</strong> <span class="term" data-term="Biogenic carbon">Biogenic carbon</span> is corrected automatically in every run, no manual fixing after the fact.</li>
     <li><strong>Balancing parameters included.</strong> The output carries the material parameters needed to enforce primary energy balancing (PERM/PENRM) alongside secondary material fractions, so the EoL numbers stay consistent with the energy modules instead of drifting apart.</li>
     <li><strong><span class="term" data-term="DQA">Data quality assessment</span> built in.</strong> Deterministically calculated for time, geography, and technology, with generic, specific, and proxy classification. Adjustable per user override.</li>

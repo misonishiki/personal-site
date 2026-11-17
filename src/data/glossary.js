@@ -14,4 +14,6 @@ export const GLOSSARY = [
   { term: 'PCR', def: 'Product Category Rules: the product-specific rulebook inside an EPD programme, so two EPDs for the same kind of product are comparable.' },
   { term: 'Programme operator', def: 'The organisation running an EPD programme: it sets the rules, manages verification, and publishes declarations. Examples: EPD International, EPD Global, INIES.' },
   { term: 'Verifier', def: 'The independent third party who checks an EPD against the standard and the programme rules before publication.' },
+  { term: 'Canonical material', def:'Made-up term: the abstracted material that is used for end-of-life modelling, mostly due to dataset limitations, insignificant differences, or grouping efficiency' },
+  { term: 'Parameters', def:'Additional indicators calculated to inform environmental impacts that is not captured by the dataset itself or unique to the modelling. i.e. Secondary material (kg/kg), Material for reuse (kg/kg), (Non-)renewable primary energy embedded in material (MJ/kg).'}
 ];
