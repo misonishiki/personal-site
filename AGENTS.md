@@ -10,7 +10,7 @@ For small changes on this site: **edit → build → screenshot, no sightseeing.
 
 ## Glossary system (added 2026-11-17)
 
-Definitions live ONLY in `src/data/glossary.js`. `/glossary` renders from it; `src/components/GlossaryCat.astro` (included in Base) powers the cat tooltips. Mark a term anywhere with `<span class="term" data-term="EPD">EPD</span>` (data-term must match a key in glossary.js). Desktop: hover raises the tooltip; touch: tap opens the bottom-right panel. Cat image: `public/cat.png` (cutout + glasses/tie collage, change `CAT_SRC` in the component to swap).
+Definitions live ONLY in `src/data/glossary.js`. `/glossary` renders from it; `src/components/GlossaryCat.astro` (included in Base) powers the cat tooltips. Mark a term anywhere with `<span class="term" data-term="EPD">EPD</span>` (data-term must match a key in glossary.js). Marking convention (user-confirmed 2026-11-17): FIRST occurrence per page only, never inside links or headings. Desktop: hover raises the tooltip; touch: tap opens the bottom-right panel. Cat image: `public/cat.png` (change `CAT_SRC` in the component to swap).
 
 ## Case-study pages (convention since 2026-11-17)
 
