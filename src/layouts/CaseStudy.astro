@@ -1,0 +1,135 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;          // page h1; <title> becomes "<title> — Alissa Nicole"
+  tagline?: string;       // the one-line pitch under the h1
+  description?: string;   // meta description
+  current?: string;       // nav key for the underline (usually omitted)
+}
+
+const { title, tagline, description, current } = Astro.props;
+---
+
+<Base title={`${title} — Alissa Nicole`} description={description} current={current}>
+  <p class="backlink"><a href="/">← All projects</a></p>
+  <h1>{title}</h1>
+  {tagline && <p class="tagline">{tagline}</p>}
+
+  <slot name="tldr" />
+
+  <nav class="toc" aria-label="Contents"></nav>
+
+  <slot />
+</Base>
+
+<style is:global>
+  /* Pinned scroll-spy ToC. Wide screens: sidebar, top-left. Narrow screens:
+     hidden behind a "Contents" chip pinned bottom-left that opens a panel. */
+  .toc {
+    position: fixed;
+    top: 7rem;
+    left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    z-index: 50;
+    max-width: 11rem;
+  }
+  .toc:empty { display: none; }
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0.45;
+    padding-left: 0.6rem;
+    border-left: 2px solid transparent;
+    transition: opacity 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { opacity: 0.9; }
+  .toc a.active {
+    opacity: 1;
+    color: var(--ink);
+    border-left-color: var(--accent);
+  }
+
+  .toc-toggle { display: none; }
+
+  @media (max-width: 74rem) {
+    .toc {
+      top: auto;
+      bottom: 4.25rem;
+      left: 1rem;
+      right: 1rem;
+      max-width: none;
+      background: var(--bg);
+      border: 1px solid var(--faint);
+      border-radius: 6px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.9rem;
+      gap: 0.55rem;
+      display: none;
+    }
+    .toc.open { display: flex; }
+    .toc a { opacity: 0.8; }
+
+    .toc-toggle {
+      display: block;
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 50;
+      background: var(--panel, #1b1a18);
+      color: var(--muted);
+      border: 1px solid var(--faint);
+      border-radius: 999px;
+      padding: 0.5rem 1rem;
+      font: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .toc-toggle:hover { color: var(--ink); }
+  }
+</style>
+
+<script>
+  // Auto-build the ToC from the page's h2[id] sections (label: data-toc attr
+  // or the heading text), then scroll-spy to highlight the current one.
+  // Fewer than 4 sections: no ToC at all, short pages don't need one.
+  // On narrow screens a "Contents" chip toggles the ToC as a bottom panel.
+  const heads = [...document.querySelectorAll('h2[id]')];
+  const toc = document.querySelector('.toc');
+  if (toc && heads.length >= 4) {
+    const links = heads.map((h) => {
+      const a = document.createElement('a');
+      a.href = `#${h.id}`;
+      a.textContent = h.dataset.toc || h.textContent;
+      a.addEventListener('click', () => toc.classList.remove('open'));
+      toc.appendChild(a);
+      return a;
+    });
+    const byId = Object.fromEntries(links.map((a) => [a.hash.slice(1), a]));
+    const updateToc = () => {
+      let current = heads[0];
+      for (const h of heads) {
+        if (h.getBoundingClientRect().top <= window.innerHeight * 0.3) current = h;
+      }
+      links.forEach((a) => a.classList.remove('active'));
+      if (current) byId[current.id]?.classList.add('active');
+    };
+    window.addEventListener('scroll', updateToc, { passive: true });
+    updateToc();
+
+    const toggle = document.createElement('button');
+    toggle.className = 'toc-toggle';
+    toggle.type = 'button';
+    toggle.textContent = 'Contents';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', () => {
+      const open = toc.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    document.body.appendChild(toggle);
+  }
+</script>

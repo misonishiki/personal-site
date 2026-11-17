@@ -1,5 +1,5 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 
 // Shown verbatim in the "Routing" section. Kept as a string so Astro doesn't
 // parse the JSON braces as template expressions.
@@ -9,25 +9,12 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
   "est_cost_usd": 0.06, "ticket": "S4" }`;
 ---
 
-<Base
-  title="The Bunker — Alissa Nicole"
+<CaseStudy
+  title="The Bunker"
+  tagline="A personal agentic engineering platform, the infrastructure that lets AI agents plan, build, test, and review real software safely."
   description="Case study: the Bunker, a personal agentic engineering platform, routing, sandboxing, memory, and measurement for AI agents that do real work."
   current="home"
 >
-  <p class="backlink"><a href="/">← All projects</a></p>
-  <h1>The Bunker</h1>
-  <p class="tagline">A personal agentic engineering platform, the infrastructure that lets AI agents plan, build, test, and review real software safely.</p>
-
-  <nav class="toc" aria-label="Contents">
-    <a href="#the-problem">The problem</a>
-    <a href="#what-it-does">What it does</a>
-    <a href="#routing">Routing</a>
-    <a href="#safety">Safety</a>
-    <a href="#memory">Memory</a>
-    <a href="#measurement">Measurement</a>
-    <a href="#workflow">How work flows</a>
-    <a href="#limits">Honest limits</a>
-  </nav>
 
   <h2 id="the-problem">The problem</h2>
   <p>
@@ -59,7 +46,7 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
     </figcaption>
   </figure>
 
-  <h2 id="routing">Routing, the right model for the job</h2>
+  <h2 id="routing" data-toc="Routing">Routing, the right model for the job</h2>
   <p>
     Not every task deserves a frontier model, and not every task survives a cheap one.
     The Bunker splits work by class: a strong <strong>planner</strong> writes specs,
@@ -80,7 +67,7 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
     drift visible within a week. Compliance is auditable because the ledger exists.
   </p>
 
-  <h2 id="safety">Safety is a floor, not a feature</h2>
+  <h2 id="safety" data-toc="Safety">Safety is a floor, not a feature</h2>
   <p>
     Agents are advice-only by default, they propose, I dispose. Tool execution is
     granted per request, never per session, and when it's granted, shell commands run
@@ -91,7 +78,7 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
     by being launched.
   </p>
 
-  <h2 id="memory">Memory that compounds</h2>
+  <h2 id="memory" data-toc="Memory">Memory that compounds</h2>
   <p>
     Agents are only as good as the context they're handed, so the Bunker treats
     knowledge as infrastructure. Notes are cheap to capture and designed for
@@ -103,7 +90,7 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
     instead of re-reading the world.
   </p>
 
-  <h2 id="measurement">Measured, not asserted</h2>
+  <h2 id="measurement" data-toc="Measurement">Measured, not asserted</h2>
   <p>
     Two disciplines keep the system honest. First, an eval harness for the thing agents
     actually fail at, reading provided context, designed and now being built: graded
@@ -139,4 +126,4 @@ const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
     under deadline pressure. Those are the right questions; I'd bring the same falsifiable-hypothesis
     discipline I used for <a href="/projects/lci-graph">the graph layer</a> to answer them.
   </p>
-</Base>
+</CaseStudy>

@@ -8,6 +8,10 @@ For small changes on this site: **edit → build → screenshot, no sightseeing.
 - Keep narration minimal; the user watches this happen live and notices dead time.
 - **No em-dashes in site copy** (user rule, 2026-11-17). Use colons, commas, or full stops. (The `<title>` convention "X — Alissa Nicole" is exempt: site-wide pattern.)
 
+## Case-study pages (convention since 2026-11-17)
+
+All case studies use `src/layouts/CaseStudy.astro`, never Base directly. The layout provides: standardized backlink, h1/tagline from props, an optional `slot="tldr"` TL;DR box, and an auto-generated pinned scroll-spy ToC (built from `h2[id]` at runtime; use `data-toc="short label"` for long headings; needs 4+ sections to appear; mobile gets a "Contents" bottom-sheet toggle). To add a project: create the page, wrap in CaseStudy, write h2 sections. Do NOT hand-write ToC markup, backlinks, or h1s.
+
 ## Development
 
 When starting the dev server, use background mode:

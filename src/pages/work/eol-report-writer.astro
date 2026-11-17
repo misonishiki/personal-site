@@ -1,27 +1,22 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 ---
 
-<Base
-  title="The EoL Report Writer — Alissa Nicole"
+<CaseStudy
+  title="The EoL Report Writer"
+  tagline="Turning the EoL Fixer's output into the EoL sections of an EN 15804 background
+    report: contract-driven tables, fact-ID citations, no invented numbers."
   description="How a Claude Code skill assembles verifier-facing EoL report sections from the EoL Fixer's output: contract-driven tables, fact-ID citations, no invented numbers."
 >
-  <p class="backlink"><a href="/">← Home</a></p>
 
-  <h1>The EoL Report Writer</h1>
-  <p class="tagline">
-    Turning the EoL Fixer's output into the EoL sections of an EN 15804 background
-    report: contract-driven tables, fact-ID citations, no invented numbers.
-  </p>
-
-  <h2>The problem</h2>
+  <h2 id="the-problem">The problem</h2>
   <ul>
     <li>The model output existed, but the report was still hand-assembled: figures copied from spreadsheets by hand, phrasing re-typed per project.</li>
     <li>Every hand-copy is a chance for the report to drift from the model, and a verifier's favourite question is "where does this number come from?"</li>
     <li>Prose that quietly recomputes (a sum here, a rounded percentage there) creates inconsistencies nobody notices until verification.</li>
   </ul>
 
-  <h2>The constraints</h2>
+  <h2 id="the-constraints">The constraints</h2>
   <ul>
     <li>EoL sections are verifier-facing: nothing can be approximate, and every number must trace back to the run.</li>
     <li>No client history allowed: unlike a report's opening sections, EoL text runs on standard practice, geography, and approved wording only.</li>
@@ -29,7 +24,7 @@ import Base from '../../layouts/Base.astro';
     <li>The target is a living Word document that colleagues may have open at the same time.</li>
   </ul>
 
-  <h2>What it does</h2>
+  <h2 id="what-it-does">What it does</h2>
   <p>
     A Claude Code skill that reads the EoL Fixer's report workbook and builds the
     report's EoL content around it: places each table verbatim, writes the
@@ -39,7 +34,7 @@ import Base from '../../layouts/Base.astro';
     them.
   </p>
 
-  <h2>Features</h2>
+  <h2 id="features">Features</h2>
   <ul>
     <li><strong>Contract-driven input.</strong> The workbook's contents tab declares which tables exist and, for any table that is empty or excluded, says why. The skill reports the reason instead of quietly building the table some other way.</li>
     <li><strong>Verbatim placement.</strong> Tables go in with their own headers, units, row order, and column order. Nothing is merged, re-sorted, dropped, or recomputed.</li>
@@ -50,13 +45,13 @@ import Base from '../../layouts/Base.astro';
     <li><strong>The hard tables included.</strong> Biogenic carbon content with its supporting narrative, the dataset register with justification and geography, module D, and data-quality summaries.</li>
   </ul>
 
-  <h2>The receipts</h2>
+  <h2 id="the-receipts">The receipts</h2>
   <ul>
     <li>Built across a sustained engagement adding EoL, biogenic-carbon, and dataset-register content to a real EN 15804 background report; the patterns held across every table and section.</li>
     <li>It is the second half of the production line: the <a href="/work/eol-fixer">EoL Fixer</a> generates, the report writer assembles, and the <a href="/epds">published EPDs</a> carry the result.</li>
   </ul>
 
-  <h2>Why it's built this way</h2>
+  <h2 id="why-built">Why it's built this way</h2>
   <ul>
     <li><strong>The engine decides, the prose arranges.</strong> Anything calculable belongs to the tool; the skill handles placement, wording, and structure. That split is what makes the output auditable.</li>
     <li><strong>No historical examples, by design.</strong> EoL sections deliberately see no past reports: standard practice and geography only, so one client's phrasing never leaks into another client's report.</li>
@@ -92,4 +87,4 @@ import Base from '../../layouts/Base.astro';
     Internal tooling, described at the level of approach: no client information,
     no proprietary assets.
   </p>
-</Base>
+</CaseStudy>

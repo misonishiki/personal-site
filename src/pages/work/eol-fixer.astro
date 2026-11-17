@@ -1,20 +1,14 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 ---
 
-<Base
-  title="The EoL Fixer — Alissa Nicole"
+<CaseStudy
+  title="The EoL Fixer"
+  tagline="Standardizing end-of-life modelling for an EPD team, built around the software rather than into it."
   description="How a sidecar web app standardized end-of-life modelling across an EPD team: built around legacy software, not into it."
 >
-  <p class="backlink"><a href="/">← Home</a></p>
 
-  <h1>The EoL Fixer</h1>
-  <p class="tagline">
-    Standardizing end-of-life modelling for an EPD team, built around the software
-    rather than into it.
-  </p>
-
-  <h2>The problem</h2>
+  <h2 id="the-problem">The problem</h2>
   <ul>
     <li>Everyone was <strong>cowboying their own way of doing EoL</strong>: per project, per modeller, no two files alike.</li>
     <li>Every modeller was separately <strong>re-interpreting each standard's EoL rules</strong>. The same methodological questions (module D drawback, biogenic carbon, dataset quirks) were answered over and over, differently, by different people.</li>
@@ -22,21 +16,21 @@ import Base from '../../layouts/Base.astro';
     <li>And mistakes surfaced at verification, the most expensive moment to find them.</li>
   </ul>
 
-  <h2>The constraints</h2>
+  <h2 id="the-constraints">The constraints</h2>
   <ul>
     <li>The core software was legacy. Developers wouldn't touch it, so rebuilding or plugging in was off the table.</li>
     <li>No API to integrate with: the <strong>only</strong> sanctioned interface was the tools' own Excel import/export.</li>
     <li>Every modeller had their own manual workflow: inconsistent inputs, inconsistent outputs, verifier pain, and a high cost of handing over.</li>
   </ul>
 
-  <h2>What it does</h2>
+  <h2 id="what-it-does">What it does</h2>
   <p>
     A web app that turns an end-of-life scenario sheet into EN 15804 import files for
     the team's LCA tools, plus a verification report to check them against. It is
     a <strong>sidecar, not a plugin</strong>: it sits outside the software and speaks
     its one language, import files.
   </p>
-  <h2>Features</h2>
+  <h2 id="features">Features</h2>
 
   <h3>Finding the right material</h3>
   <ul>
@@ -113,7 +107,7 @@ import Base from '../../layouts/Base.astro';
     </div>
   </figure>
 
-  <h2>The receipts</h2>
+  <h2 id="the-receipts">The receipts</h2>
   <ul>
     <li>Hosted, versioned, CI-tested, and used by the whole team.</li>
     <li>Every EPD the company I work at published since 2025 was modelled with it (see the <a href="/epds">published EPDs</a>).</li>
@@ -121,7 +115,7 @@ import Base from '../../layouts/Base.astro';
     <li>Methodology covered for five programme operators: NMD, EPD Global, EPD International, INIES, and self-declared EPDs.</li>
   </ul>
 
-  <h2>Why it's built this way</h2>
+  <h2 id="why-built">Why it's built this way</h2>
   <ul>
     <li><strong>Import/export as the integration layer.</strong> If the software won't change, standardize what crosses its border instead.</li>
     <li><strong>One scenario, many dialects.</strong> The tool holds the EoL scenario once (standard-independent: masses, fates, distances) and translates it into each programme operator's format and methodology rules. The interpolatability that was missing by hand is the core of the design.</li>
@@ -135,4 +129,4 @@ import Base from '../../layouts/Base.astro';
     Internal tool, shown with fictional project data: no client information,
     no proprietary assets.
   </p>
-</Base>
+</CaseStudy>

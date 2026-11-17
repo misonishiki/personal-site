@@ -1,5 +1,5 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 
 // Shown verbatim in the "Export" section. Kept as a string so Astro doesn't
 // parse the JSON braces as template expressions.
@@ -20,24 +20,13 @@ const jsonldSnippet = `{
 }`;
 ---
 
-<Base
-  title="LCI·GRAPH — Alissa Nicole"
+<CaseStudy
+  title="LCI·GRAPH"
+  tagline="An open-source pipeline that turns the LCA literature into a queryable inventory database."
   description="Case study: LCI·GRAPH, an open-source pipeline that extracts life-cycle inventory data from academic papers into a queryable database."
   current="home"
 >
-  <p class="backlink"><a href="/">← All projects</a></p>
-  <h1>LCI·GRAPH</h1>
-  <p class="tagline">An open-source pipeline that turns the LCA literature into a queryable inventory database.</p>
   <p><a href="https://lci.alissa.ing/">Try the live magnet test case ↗</a></p>
-
-  <nav class="toc" aria-label="Contents">
-    <a href="#the-problem">The problem</a>
-    <a href="#what-it-does">What it does</a>
-    <a href="#part-1">Part 1, extraction</a>
-    <a href="#interlude">Interlude, identity</a>
-    <a href="#part-2">Part 2, graph layer</a>
-    <a href="#where-it-stands">Where it stands</a>
-  </nav>
 
   <h2 id="the-problem">The problem</h2>
   <p>
@@ -70,7 +59,7 @@ const jsonldSnippet = `{
     <figcaption>Papers in the database, each with its DOI, system boundary, and background database preserved.</figcaption>
   </figure>
 
-  <h2 id="part-1">Part 1, the extraction pipeline</h2>
+  <h2 id="part-1" data-toc="Part 1, extraction">Part 1, the extraction pipeline</h2>
   <p>
     The pipeline's job is not just to find the numbers in a paper, it's to keep
     everything that makes those numbers meaningful. On the left: a table buried on page
@@ -178,7 +167,7 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
-  <h2 id="interlude">Interlude, normalizing to canonical materials: how corrections become memory</h2>
+  <h2 id="interlude" data-toc="Interlude, identity">Interlude, normalizing to canonical materials: how corrections become memory</h2>
   <p>
     Between extraction and the graph layer sits a less glamorous problem that decides
     whether any of the comparison features work at all: <strong>identity</strong>. "What
@@ -272,7 +261,7 @@ electricity gap spot check:
     </figcaption>
   </figure>
 
-  <h2 id="part-2">Part 2, the graph layer, put to a falsifiable test</h2>
+  <h2 id="part-2" data-toc="Part 2, graph layer">Part 2, the graph layer, put to a falsifiable test</h2>
   <p>
     The relational store works, but the data underneath it is graph-shaped: activities
     connected by flows, with identity ("what substance is this?"), provenance ("which
@@ -449,61 +438,8 @@ electricity gap spot check:
     graph backend replace the relational one behind a flag.
   </p>
   <p class="muted-note">
-    Screenshots are static snapshots of the local platform; there is no live demo,
-    the database contains other people's published data, shown here for illustration.
+    Screenshots are static snapshots of the local platform; the live demo is at
+    <a href="https://lci.alissa.ing/">lci.alissa.ing</a>. The database contains other
+    people's published data, shown here for illustration.
   </p>
-<style>
-  /* Discreet table of contents, pinned top-left, follows scroll (scroll-spy).
-     Only shown when the viewport is wide enough that it can't collide with the
-     42rem centered column. */
-  .toc {
-    position: fixed;
-    top: 7rem;
-    left: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-size: 0.78rem;
-    line-height: 1.3;
-    z-index: 5;
-  }
-  .toc a {
-    color: var(--muted);
-    text-decoration: none;
-    opacity: 0.45;
-    padding-left: 0.6rem;
-    border-left: 2px solid transparent;
-    transition: opacity 0.15s, border-color 0.15s;
-  }
-  .toc a:hover { opacity: 0.9; }
-  .toc a.active {
-    opacity: 1;
-    color: var(--ink);
-    border-left-color: var(--accent);
-  }
-  @media (max-width: 74rem) {
-    .toc { display: none; }
-  }
-</style>
-
-<script>
-  // Scroll-spy: highlight the TOC entry of the section currently in view.
-  // (Scroll listener, not IntersectionObserver: fast scrolling can jump an h2
-  // clean across an observer band without ever intersecting it, the active
-  // entry would then stick on the wrong section.)
-  const tocLinks = [...document.querySelectorAll('.toc a')];
-  const byId = Object.fromEntries(tocLinks.map((a) => [a.hash.slice(1), a]));
-  const heads = [...document.querySelectorAll('h2[id]')];
-  const updateToc = () => {
-    let current = heads[0];
-    for (const h of heads) {
-      if (h.getBoundingClientRect().top <= window.innerHeight * 0.3) current = h;
-    }
-    tocLinks.forEach((a) => a.classList.remove('active'));
-    if (current) byId[current.id]?.classList.add('active');
-  };
-  window.addEventListener('scroll', updateToc, { passive: true });
-  updateToc();
-</script>
-
-</Base>
+</CaseStudy>

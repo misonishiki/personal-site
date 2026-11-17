@@ -1,17 +1,14 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 ---
 
-<Base
-  title="The Paper Trail — Alissa Nicole"
+<CaseStudy
+  title="The Paper Trail"
+  tagline="How to “automate” report writing, and more."
   description="Case study: context engineering at work, turning scattered client history into governed, agent-readable knowledge, with curated libraries and measured matching."
   current="home"
 >
-  <p class="backlink"><a href="/">← All projects</a></p>
-  <h1>The Paper Trail</h1>
-  <p class="tagline">How to “automate” report writing, and more.</p>
-
-  <div class="tldr">
+  <div class="tldr" slot="tldr">
     <strong>TL;DR</strong>
     <ul>
       <li><strong>Problem:</strong> every report meant re-hunting months of client emails and attachments; the early fixes (prompt-stuffing first, RAG after) produced fluent garbage.</li>
@@ -20,18 +17,6 @@ import Base from '../../layouts/Base.astro';
       <li><strong>Governance:</strong> new knowledge enters the library through a human review gate, and colleagues operate the system from a written primer.</li>
     </ul>
   </div>
-
-  <nav class="toc" aria-label="Contents">
-    <a href="#the-problem">The problem</a>
-    <a href="#the-false-start">The false start</a>
-    <a href="#what-i-tried">What I tried</a>
-    <a href="#two-kinds">Two kinds of context</a>
-    <a href="#the-mental-model">The mental model</a>
-    <a href="#the-routine">The routine</a>
-    <a href="#the-library">The library</a>
-    <a href="#the-primer">The primer</a>
-    <a href="#where-it-stands">Where it stands</a>
-  </nav>
 
   <h2 id="the-problem">The problem</h2>
   <p>
@@ -44,7 +29,7 @@ import Base from '../../layouts/Base.astro';
     that isn't structured.
   </p>
 
-  <h2 id="the-false-start">The false start: more context, same failure</h2>
+  <h2 id="the-false-start" data-toc="The false start">The false start: more context, same failure</h2>
   <p>
     My first AI work was in the RAG days, the retrieval era. The pitch was seductive:
     pipe your documents into a vector store, retrieve the right chunks at query time,
@@ -100,7 +85,7 @@ import Base from '../../layouts/Base.astro';
     </tbody>
   </table>
 
-  <h2 id="two-kinds">One report, two kinds of context</h2>
+  <h2 id="two-kinds" data-toc="Two kinds of context">One report, two kinds of context</h2>
   <p>
     The key move was to stop treating "the report" as one context problem. It isn't,
     it's several, and they need different things:
@@ -127,7 +112,7 @@ import Base from '../../layouts/Base.astro';
     </figcaption>
   </figure>
 
-  <h2 id="the-mental-model">The mental model: dictionaries all the way down</h2>
+  <h2 id="the-mental-model" data-toc="The mental model">The mental model: dictionaries all the way down</h2>
   <p>
     Step back from the diagram and the whole system is one idea, epitomised: <strong>dictionary lookup, taken seriously.</strong>
   </p>
@@ -147,7 +132,7 @@ import Base from '../../layouts/Base.astro';
     keep them true, and let everything downstream be lookup.
   </p>
 
-  <h2 id="the-routine">The routine: correspondence that files itself, carefully</h2>
+  <h2 id="the-routine" data-toc="The routine">The routine: correspondence that files itself, carefully</h2>
   <p>
     The first piece exists to feed the report's opening sections. It's an automated routine
     that reads incoming client email, matches each sender to the right project, and
@@ -198,7 +183,7 @@ import Base from '../../layouts/Base.astro';
     they go stale.
   </p>
 
-  <h2 id="the-library">The library: curated knowledge with a review gate</h2>
+  <h2 id="the-library" data-toc="The library">The library: curated knowledge with a review gate</h2>
   <p>
     The second piece powers the EoL sections. It's the knowledge base behind the EoL
     engine (the <a href="/work/eol-fixer">EoL Fixer</a>), the tool that turned
@@ -214,7 +199,7 @@ import Base from '../../layouts/Base.astro';
     <li><strong>Corrections become memory, designed, and being built.</strong> The review intake is live for maintainer and LLM proposals; the piece in build is the full learning loop: every run's confirmations, rejections, and substitutions flowing back automatically into pending-review intake, approved rows syncing into the next library version, the gold set growing with real names. The same mistake is not made twice.</li>
   </ul>
 
-  <h2 id="the-primer">The primer: teaching the machine's mind to non-engineers</h2>
+  <h2 id="the-primer" data-toc="The primer">The primer: teaching the machine's mind to non-engineers</h2>
   <p>
     A knowledge system dies if only its builder can feed it. So I wrote the primer,
     a document that teaches the matching engine's mental model to LCA specialists with
@@ -240,58 +225,4 @@ import Base from '../../layouts/Base.astro';
     knowing exactly where your edges are.
   </p>
 
-<style>
-  /* Discreet table of contents, pinned top-left, follows scroll (scroll-spy).
-     Same pattern as the LCI·GRAPH page. Only shown when the viewport is wide
-     enough that it can't collide with the 42rem centered column. */
-  .toc {
-    position: fixed;
-    top: 7rem;
-    left: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-size: 0.78rem;
-    line-height: 1.3;
-    z-index: 5;
-  }
-  .toc a {
-    color: var(--muted);
-    text-decoration: none;
-    opacity: 0.45;
-    padding-left: 0.6rem;
-    border-left: 2px solid transparent;
-    transition: opacity 0.15s, border-color 0.15s;
-  }
-  .toc a:hover { opacity: 0.9; }
-  .toc a.active {
-    opacity: 1;
-    color: var(--ink);
-    border-left-color: var(--accent);
-  }
-  @media (max-width: 74rem) {
-    .toc { display: none; }
-  }
-</style>
-
-<script>
-  // Scroll-spy: highlight the TOC entry of the section currently in view.
-  // (Scroll listener, not IntersectionObserver: fast scrolling can jump an h2
-  // clean across an observer band without ever intersecting it, the active
-  // entry would then stick on the wrong section.)
-  const tocLinks = [...document.querySelectorAll('.toc a')];
-  const byId = Object.fromEntries(tocLinks.map((a) => [a.hash.slice(1), a]));
-  const heads = [...document.querySelectorAll('h2[id]')];
-  const updateToc = () => {
-    let current = heads[0];
-    for (const h of heads) {
-      if (h.getBoundingClientRect().top <= window.innerHeight * 0.3) current = h;
-    }
-    tocLinks.forEach((a) => a.classList.remove('active'));
-    if (current) byId[current.id]?.classList.add('active');
-  };
-  window.addEventListener('scroll', updateToc, { passive: true });
-  updateToc();
-</script>
-
-</Base>
+</CaseStudy>

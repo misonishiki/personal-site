@@ -1,15 +1,12 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 ---
 
-<Base
-  title="PORTFARMLIO — Alissa Nicole"
+<CaseStudy
+  title="PORTFARMLIO"
+  tagline="An algorithmic trading platform, not a bot: one engine, plug-in strategies, and a dashboard that is also a farm."
   description="Case study: PORTFARMLIO, a strategy-agnostic algorithmic trading platform with a rigor-enforcing backtest harness and a farm-view dashboard."
 >
-  <p class="backlink"><a href="/">← All projects</a></p>
-
-  <h1>PORTFARMLIO</h1>
-  <p class="tagline">An algorithmic trading platform, not a bot: one engine, plug-in strategies, and a dashboard that is also a farm.</p>
   <p>
     <a href="/portfarmlio/garden.html">Browse the garden view ↗</a> ·
     <a href="/portfarmlio/">browse the serious dashboard ↗</a><br />
@@ -21,21 +18,21 @@ import Base from '../../layouts/Base.astro';
     <figcaption>The garden view in motion: land is capital, crops are positions, and the livestock keeps walking. Paper money throughout.</figcaption>
   </figure>
 
-  <h2>The problem</h2>
+  <h2 id="the-problem">The problem</h2>
   <p>
     Most personal trading code is a spaghetti script: strategy logic, broker calls, and
     risk checks tangled together, where one bug costs real money and adding a second
     strategy means rewriting the first. I wanted a platform, not a bot.
   </p>
 
-  <h2>The constraints</h2>
+  <h2 id="the-constraints">The constraints</h2>
   <ul>
     <li>Real money is on the other side of the API, so safety cannot be a convention, it has to be enforced in code.</li>
     <li>Strategies come and go with ideas and elections; the engine should never change when one does.</li>
     <li>Learning requires running the whole thing with no keys, no network, and no packages installed.</li>
   </ul>
 
-  <h2>What it does</h2>
+  <h2 id="what-it-does">What it does</h2>
   <p>
     A strategy-agnostic engine, plug-in strategy bundles, and a backtesting harness
     that enforces rigor, written in Python against Alpaca. Paper trading by default;
@@ -43,7 +40,7 @@ import Base from '../../layouts/Base.astro';
     offline mode, so a bare checkout runs end-to-end immediately.
   </p>
 
-  <h2>Why it's built this way</h2>
+  <h2 id="why-built">Why it's built this way</h2>
   <ul>
     <li><strong>The contract is sacred.</strong> The engine knows nothing about any strategy; a strategy knows nothing about plumbing. No strategy module talks to the broker, and the risk manager has zero strategy-specific branches. Adding a strategy is one new bundle plus one line in config.</li>
     <li><strong>Safety is structural, not disciplined.</strong> A kill-switch halts all trading at a fixed daily loss, a single-order size cap catches sizing bugs, every order carries an idempotency key, and a reconciliation pass compares the book against the broker with an objection window before acting.</li>
@@ -63,7 +60,7 @@ import Base from '../../layouts/Base.astro';
     </ul>
   </details>
 
-  <h2>Where it stands</h2>
+  <h2 id="where-it-stands">Where it stands</h2>
   <p class="muted-note">
     Paper trading only. Two strategies run live logic (a defined-risk options sleeve and
     an election-thesis basket whose entry window has closed), two more are built but OFF
@@ -71,4 +68,4 @@ import Base from '../../layouts/Base.astro';
     including reconciliation warnings and an over-deployed field, because those are the
     parts the safety system exists to catch.
   </p>
-</Base>
+</CaseStudy>

@@ -1,26 +1,13 @@
 ---
-import Base from '../../layouts/Base.astro';
+import CaseStudy from '../../layouts/CaseStudy.astro';
 ---
 
-<Base
-  title="The Radar — Alissa Nicole"
+<CaseStudy
+  title="The Radar"
+  tagline="A pipeline that turns public LinkedIn chatter and EU official sources into structured, verifiable regulatory intelligence."
   description="Case study: a pipeline that turns public LinkedIn chatter and EU official sources into structured, verifiable regulatory intelligence."
   current="home"
 >
-  <p class="backlink"><a href="/">← All projects</a></p>
-  <h1>The Radar</h1>
-  <p class="tagline">A pipeline that turns public LinkedIn chatter and EU official sources into structured, verifiable regulatory intelligence.</p>
-
-  <nav class="toc" aria-label="Contents">
-    <a href="#the-problem">The problem</a>
-    <a href="#what-it-does">What it does</a>
-    <a href="#discipline">The discipline</a>
-    <a href="#themes">827 phrasings, 65 labels</a>
-    <a href="#cost">Cost engineering</a>
-    <a href="#official">Official sources</a>
-    <a href="#loop">The knowledge loop</a>
-    <a href="#where-it-stands">Where it stands</a>
-  </nav>
 
   <h2 id="the-problem">The problem</h2>
   <p>
@@ -52,7 +39,7 @@ import Base from '../../layouts/Base.astro';
     </figcaption>
   </figure>
 
-  <h2 id="discipline">The discipline: raw is sacred, derived is disposable</h2>
+  <h2 id="discipline" data-toc="The discipline">The discipline: raw is sacred, derived is disposable</h2>
   <p>
     The same rule as everywhere else I build: <strong>AI drafts, rules decide, humans
     approve</strong>, and here it has a storage-layer twin. The raw archive is
@@ -71,7 +58,7 @@ import Base from '../../layouts/Base.astro';
     circular, so the verdict honestly stays null.
   </p>
 
-  <h2 id="themes">827 phrasings, 65 labels: the clustering problem</h2>
+  <h2 id="themes" data-toc="827 phrasings, 65 labels">827 phrasings, 65 labels: the clustering problem</h2>
   <p>
     The dashboards track "industry themes", but LLM-extracted concerns are unique
     phrasings, so across 511 posts there were <strong>748 distinct ways of saying
@@ -98,7 +85,7 @@ import Base from '../../layouts/Base.astro';
     </figcaption>
   </figure>
 
-  <h2 id="cost">Cost engineering: measured, then cut 94%</h2>
+  <h2 id="cost" data-toc="Cost engineering">Cost engineering: measured, then cut 94%</h2>
   <p>
     The scraping API is pay-per-result, and dedup was local, so every run re-paid for
     the latest 20 posts of every source. I found out the hard way: the $5 free tier
@@ -115,7 +102,7 @@ import Base from '../../layouts/Base.astro';
     cleanly with the API's own message surfaced.
   </p>
 
-  <h2 id="official">Official sources: three doors, all probed live first</h2>
+  <h2 id="official" data-toc="Official sources">Official sources: three doors, all probed live first</h2>
   <p>
     LinkedIn chatter is half the picture; the other half is law. EUR-Lex proper
     bot-blocks automation, but the CELLAR SPARQL endpoint answers anonymously, so
@@ -138,7 +125,7 @@ import Base from '../../layouts/Base.astro';
     </figcaption>
   </figure>
 
-  <h2 id="loop">The knowledge loop: questions, not just posts</h2>
+  <h2 id="loop" data-toc="The knowledge loop">The knowledge loop: questions, not just posts</h2>
   <p>
     The Radar is organized around <strong>research questions</strong>, not keywords,
     a kanban of open questions that every classification is tagged against. After each
@@ -167,4 +154,4 @@ import Base from '../../layouts/Base.astro';
     That skepticism is a feature: in this domain, an unverified claim is exactly the
     thing worth knowing about.
   </p>
-</Base>
+</CaseStudy>
