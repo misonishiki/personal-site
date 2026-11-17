@@ -42,7 +42,8 @@ import Base from '../../layouts/Base.astro';
     <li><strong>Default material library variables.</strong> Datasets scoped to the desired database version (Ecoinvent and NMD) and end-of-life variable defaults per canonical material.</li>
     <li><strong>Automatching.</strong> Based on input material and modeller-determined fates.</li>
     <li><strong>Enforced reasoning.</strong> When the modeller overrides an automatched value set, reasoning is required before the run continues. The reporting output stays complete, and no hours are lost recovering forgotten choices down the line.</li>
-    <li><strong>Complete parameter set.</strong> All parameters are generated, and biogenic carbon is corrected, so nothing is left half-filled for the modeller to chase down later.</li>
+    <li><strong>Complete parameter set.</strong> All parameters are generated, so nothing is left half-filled for the modeller to chase down later.</li>
+    <li><strong>Automatic biogenic carbon correction.</strong> Biogenic carbon is corrected automatically in every run, no manual fixing after the fact.</li>
     <li><strong>Balancing parameters included.</strong> The output carries the material parameters needed to enforce primary energy balancing (PERM/PENRM) alongside secondary material fractions, so the EoL numbers stay consistent with the energy modules instead of drifting apart.</li>
     <li><strong>Data quality assessment built in.</strong> Deterministically calculated for time, geography, and technology, with generic, specific, and proxy classification. Adjustable per user override.</li>
     <li><strong>Output EoL report.</strong> Built to feed the report-writing skill, which copies the relevant sections with their specific figures into the final report.</li>
