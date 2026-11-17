@@ -146,6 +146,7 @@ const CAT_SRC = '/cat.png';
     border-right: 0;
   }
   .gcat-close {
+    display: none;                 /* hidden until the panel opens */
     position: absolute;
     top: -0.6rem;
     left: -0.6rem;
@@ -160,5 +161,6 @@ const CAT_SRC = '/cat.png';
     cursor: pointer;
     z-index: 2;
   }
+  .gcat-panel.open .gcat-close { display: block; }
   .gcat-close:hover { color: var(--ink); }
 </style>
