@@ -11,8 +11,8 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   <h2 id="the-problem">The problem</h2>
   <ul>
     <li>Everyone was <strong>cowboying their own way of doing EoL</strong>: per project, per modeller, no two files alike.</li>
-    <li>Every modeller was separately <strong>re-interpreting each standard's EoL rules</strong>. The same methodological questions (module D drawback, biogenic carbon, dataset quirks) were answered over and over, differently, by different people.</li>
-    <li>So work that should have been interpolatable between standards wasn't: same product, same physics, a whole new set of hours per programme operator.</li>
+    <li>Every modeller was separately <strong>re-interpreting each standard's EoL rules</strong>. The same methodological questions (<span class="term" data-term="Module D">module D</span> drawback, biogenic carbon, dataset quirks) were answered over and over, differently, by different people.</li>
+    <li>So work that should have been interpolatable between standards wasn't: same product, same physics, a whole new set of hours per <span class="term" data-term="Programme operator">programme operator</span>.</li>
     <li>And mistakes surfaced at verification, the most expensive moment to find them.</li>
   </ul>
 
@@ -20,7 +20,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   <ul>
     <li>The core software was legacy. Developers wouldn't touch it, so rebuilding or plugging in was off the table.</li>
     <li>No API to integrate with: the <strong>only</strong> sanctioned interface was the tools' own Excel import/export.</li>
-    <li>Every modeller had their own manual workflow: inconsistent inputs, inconsistent outputs, verifier pain, and a high cost of handing over.</li>
+    <li>Every modeller had their own manual workflow: inconsistent inputs, inconsistent outputs, <span class="term" data-term="Verifier">verifier</span> pain, and a high cost of handing over.</li>
   </ul>
 
   <h2 id="what-it-does">What it does</h2>
@@ -44,7 +44,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
     <li><strong>Complete parameter set.</strong> All parameters are generated, so nothing is left half-filled for the modeller to chase down later.</li>
     <li><strong>Automatic biogenic carbon correction.</strong> <span class="term" data-term="Biogenic carbon">Biogenic carbon</span> is corrected automatically in every run, no manual fixing after the fact.</li>
     <li><strong>Balancing parameters included.</strong> The output carries the material parameters needed to enforce primary energy balancing (PERM/PENRM) alongside secondary material fractions, so the EoL numbers stay consistent with the energy modules instead of drifting apart.</li>
-    <li><strong>Data quality assessment built in.</strong> Deterministically calculated for time, geography, and technology, with generic, specific, and proxy classification. Adjustable per user override.</li>
+    <li><strong><span class="term" data-term="DQA">Data quality assessment</span> built in.</strong> Deterministically calculated for time, geography, and technology, with generic, specific, and proxy classification. Adjustable per user override.</li>
   </ul>
 
   <h3>Fitting the team</h3>

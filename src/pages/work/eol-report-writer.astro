@@ -12,7 +12,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   <h2 id="the-problem">The problem</h2>
   <ul>
     <li>The model output existed, but the report was still hand-assembled: figures copied from spreadsheets by hand, phrasing re-typed per project.</li>
-    <li>Every hand-copy is a chance for the report to drift from the model, and a verifier's favourite question is "where does this number come from?"</li>
+    <li>Every hand-copy is a chance for the report to drift from the model, and a <span class="term" data-term="Verifier">verifier</span>'s favourite question is "where does this number come from?"</li>
     <li>Prose that quietly recomputes (a sum here, a rounded percentage there) creates inconsistencies nobody notices until verification.</li>
   </ul>
 
@@ -26,7 +26,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
 
   <h2 id="what-it-does">What it does</h2>
   <p>
-    A Claude Code skill that reads the EoL Fixer's report workbook and builds the
+    A Claude Code skill that reads the <span class="term" data-term="EoL">EoL</span> Fixer's report workbook and builds the
     report's EoL content around it: places each table verbatim, writes the
     surrounding narrative from approved snippets, and cites every number through a
     fact ID. The workbook is treated as a contract: code has already decided the
@@ -42,12 +42,12 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
     <li><strong>Fact-ID citation.</strong> Every number in prose, captions, and footnotes comes from a named fact in the workbook. The skill never computes a number, not even an easy sum; derivations go through a script that works from named facts.</li>
     <li><strong>Traceable drafts.</strong> When the draft is shown to the modeller, it lists the fact IDs used, so every number can be traced back in seconds.</li>
     <li><strong>Version awareness.</strong> Understands Fixer outputs across versions and tells the modeller when a re-run would unlock better report content.</li>
-    <li><strong>The hard tables included.</strong> Biogenic carbon content with its supporting narrative, the dataset register with justification and geography, module D, and data-quality summaries.</li>
+    <li><strong>The hard tables included.</strong> <span class="term" data-term="Biogenic carbon">Biogenic carbon</span> content with its supporting narrative, the dataset register with justification and geography, <span class="term" data-term="Module D">module D</span>, and data-quality summaries.</li>
   </ul>
 
   <h2 id="the-receipts">The receipts</h2>
   <ul>
-    <li>Built across a sustained engagement adding EoL, biogenic-carbon, and dataset-register content to a real EN 15804 background report; the patterns held across every table and section.</li>
+    <li>Built across a sustained engagement adding EoL, biogenic-carbon, and dataset-register content to a real <span class="term" data-term="EN 15804">EN 15804</span> background report; the patterns held across every table and section.</li>
     <li>It is the second half of the production line: the <a href="/work/eol-fixer">EoL Fixer</a> generates, the report writer assembles, and the <a href="/epds">published EPDs</a> carry the result.</li>
   </ul>
 

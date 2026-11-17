@@ -92,7 +92,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   </p>
   <ul>
     <li><strong>The opening sections run on client project history</strong>, scope, correspondence, decisions. That context genuinely exists, but scattered. Hence the routine below: it builds the structured record those sections will draw on.</li>
-    <li><strong>The end-of-life sections run on standard practice, not history.</strong> EoL modeling follows established practice shaped by geographical assumptions and configuration choices, so I automated it with <em>no historical examples at all</em> (the old reports were too unstructured and messy to be worth retrieving anyway). Instead the section is generated from first principles: the calculation engine computes EoL for the project's configuration, and curated, approved text snippets, matched to the report section and the run's settings, placeholders filled from the engine's export, turn that computation into prose. The report writes itself from the calculation, not from old reports.</li>
+    <li><strong>The <span class="term" data-term="EoL">end-of-life</span> sections run on standard practice, not history.</strong> EoL modeling follows established practice shaped by geographical assumptions and configuration choices, so I automated it with <em>no historical examples at all</em> (the old reports were too unstructured and messy to be worth retrieving anyway). Instead the section is generated from first principles: the calculation engine computes EoL for the project's configuration, and curated, approved text snippets, matched to the report section and the run's settings, placeholders filled from the engine's export, turn that computation into prose. The report writes itself from the calculation, not from old reports.</li>
   </ul>
   <p>
     Now it's all connected: the report-writing layer only ever fetches the information
@@ -202,7 +202,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   <h2 id="the-primer" data-toc="The primer">The primer: teaching the machine's mind to non-engineers</h2>
   <p>
     A knowledge system dies if only its builder can feed it. So I wrote the primer,
-    a document that teaches the matching engine's mental model to LCA specialists with
+    a document that teaches the matching engine's mental model to <span class="term" data-term="LCA">LCA</span> specialists with
     no computer-science background: what a gazetteer is (a dictionary, which is what
     this whole system is), why one typo is allowed but two aren't, what a gold set is, why uncalibrated confidence is worse than none.
     Every CS term gets an LCA analogy; every design choice names the domain rule
