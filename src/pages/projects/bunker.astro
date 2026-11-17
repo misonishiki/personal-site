@@ -1,0 +1,142 @@
+---
+import Base from '../../layouts/Base.astro';
+
+// Shown verbatim in the "Routing" section. Kept as a string so Astro doesn't
+// parse the JSON braces as template expressions.
+const ledgerSnippet = `{ "ts": "2026-09-19T14:02:11Z",
+  "agent": "executor", "model": "kimi-k2.7-code",
+  "tokens_in": 41200, "tokens_out": 3800,
+  "est_cost_usd": 0.06, "ticket": "S4" }`;
+---
+
+<Base
+  title="The Bunker — Alissa Nicole"
+  description="Case study: the Bunker, a personal agentic engineering platform, routing, sandboxing, memory, and measurement for AI agents that do real work."
+  current="home"
+>
+  <p class="backlink"><a href="/">← All projects</a></p>
+  <h1>The Bunker</h1>
+  <p class="tagline">A personal agentic engineering platform, the infrastructure that lets AI agents plan, build, test, and review real software safely.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#the-problem">The problem</a>
+    <a href="#what-it-does">What it does</a>
+    <a href="#routing">Routing</a>
+    <a href="#safety">Safety</a>
+    <a href="#memory">Memory</a>
+    <a href="#measurement">Measurement</a>
+    <a href="#workflow">How work flows</a>
+    <a href="#limits">Honest limits</a>
+  </nav>
+
+  <h2 id="the-problem">The problem</h2>
+  <p>
+    One prompt is cheap; trusting the hundredth is expensive. AI coding agents are
+    genuinely capable now, but using them seriously is an infrastructure problem, not
+    a prompting problem. Which model gets which task? What is the agent allowed to
+    touch? What did that session cost? Where does its knowledge come from, and how do
+    you know it actually read what you gave it? Without answers, you get confident
+    garbage at scale. The model is the easy part; everything that makes its output
+    trustworthy has to be built.
+  </p>
+
+  <h2 id="what-it-does">What it does</h2>
+  <p>
+    The Bunker is my personal engineering environment, designed so AI agents can do
+    real work, specs, tickets, TDD loops, reviews, under explicit guardrails. Every
+    task is routed to the right class of model. Every tool call sits behind an approval
+    gate and a sandbox. Every metered session is logged with its token cost. And all knowledge
+    lives in shared stores that humans and agents read and write through the same
+    conventions. The design rule is the same one as in <a href="/projects/lci-graph">LCI·GRAPH</a>:
+    <strong>AI drafts, rules decide, humans approve.</strong>
+  </p>
+
+  <figure>
+    <img src="/snapshots/bunker/bunker-stack.svg" alt="The Bunker, top to bottom: a human sets intent and owns the merge; a frontier-class planner model turns specs into tickets and reviews output; a cheaper executor model runs headless TDD loops in git worktrees; a guardrails band, quota guard, Docker sandbox, approval gate, applies to every call; and a memory band, knowledge layer over MCP and a usage ledger, makes everything compound and everything counted." loading="lazy" />
+    <figcaption>
+      The whole machine, top to bottom. Blue is where models run, grey is deterministic
+      code, orange is me. Each layer below gets its close-up.
+    </figcaption>
+  </figure>
+
+  <h2 id="routing">Routing, the right model for the job</h2>
+  <p>
+    Not every task deserves a frontier model, and not every task survives a cheap one.
+    The Bunker splits work by class: a strong <strong>planner</strong> writes specs,
+    breaks them into tickets, and reviews what got built; a cheaper <strong>executor</strong>
+    runs the headless TDD loops, roughly 10% of a ticket's token burn goes to the
+    planner, the rest to the executor. A shared quota guard gates every session: a live
+    read of the provider's usage API on the CLI, a short-cached one on the server,
+    blocking above configurable thresholds, fail-closed, because an unreachable usage
+    API is not a reason to spend blind.
+  </p>
+  <p>
+    Routing decisions are audited against actuals, not vibes. Every session appends to
+    a usage ledger, model, tokens, estimated cost, which ticket it served:
+  </p>
+  <pre><code>{ledgerSnippet}</code></pre>
+  <p>
+    If execution tokens start showing up on the planner's model, the summary makes the
+    drift visible within a week. Compliance is auditable because the ledger exists.
+  </p>
+
+  <h2 id="safety">Safety is a floor, not a feature</h2>
+  <p>
+    Agents are advice-only by default, they propose, I dispose. Tool execution is
+    granted per request, never per session, and when it's granted, shell commands run
+    inside a Docker sandbox with the working directory mounted in. Secrets live in one
+    central place and are never copied into project directories; a project-local config
+    that overrides a fresh token is a bug I've already fixed once. The gate is the
+    product: autonomy is something the system earns per request, not something it gets
+    by being launched.
+  </p>
+
+  <h2 id="memory">Memory that compounds</h2>
+  <p>
+    Agents are only as good as the context they're handed, so the Bunker treats
+    knowledge as infrastructure. Notes are cheap to capture and designed for
+    rediscovery: a tag taxonomy with tolerant routing into a central project registry,
+    unique entry IDs, freshness conventions. Decisions live in specs with decision
+    logs, so the <em>why</em> survives the session that made it. Agents reach all of it
+    through MCP servers, the same stores I use, the same write paths. And every
+    project carries a handoff file, so the next session starts where this one ended
+    instead of re-reading the world.
+  </p>
+
+  <h2 id="measurement">Measured, not asserted</h2>
+  <p>
+    Two disciplines keep the system honest. First, an eval harness for the thing agents
+    actually fail at, reading provided context, designed and now being built: graded
+    0–4 checks, golden needles planted in documents, negative-claim audits, deterministic
+    checks before any model-graded ones. Second, a review loop with teeth, already in
+    practice: executor work is not "done" when tests go green, the planner re-reads the
+    output against the ticket's intent, because tests prove the cases pass, not that the
+    design is clean. Green is necessary, not sufficient.
+  </p>
+
+  <h2 id="workflow">How work flows</h2>
+  <p>
+    A feature starts as a short decisions-table spec. The spec breaks into vertical
+    tracer-bullet tickets, each one a thin slice through every layer, demonstrable
+    end-to-end. Tickets go to the headless executor, a topology validated on real
+    ticket work, which loops red-green-refactor; verification and a planner review
+    pass follow; commits stay scoped to the ticket. Parallel execution across git
+    worktrees is spec'd as the next step. Every ticket ends with a handoff note for
+    the next session, because I clear context between sessions and the system has to
+    remember what I don't. Feedback loops stay short, integration risk surfaces
+    immediately, and every increment is shippable-ish.
+  </p>
+
+  <h2 id="limits">Honest limits</h2>
+  <p>
+    This is a single-user system at personal scale, not a 200-engineer monorepo, and
+    I won't pretend the numbers are anything else. The ledger has a known blind spot,
+    recorded in the spec: advice-only sessions leave no token trace, so their cost is
+    estimated from payload size instead of measured. What transfers is the topology, the
+    gates, and the measurement discipline. What I'd test first at company scale:
+    whether the quota guard's fail-closed default survives a team that hits limits
+    daily, and whether per-request approval stays a gate or becomes a rubber stamp
+    under deadline pressure. Those are the right questions; I'd bring the same falsifiable-hypothesis
+    discipline I used for <a href="/projects/lci-graph">the graph layer</a> to answer them.
+  </p>
+</Base>

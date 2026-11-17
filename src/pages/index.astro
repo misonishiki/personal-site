@@ -4,12 +4,30 @@ import Base from '../layouts/Base.astro';
 
 <Base title="Alissa Nicole" current="home">
   <h1>Alissa Nicole</h1>
-  <p class="tagline">I build software usually related to sustainability.</p>
+  <p class="tagline">I build software usually related to sustainability, mostly motivated by my laziness and creativity.</p>
   <p>
     LCA engineer turned product builder, based in the Netherlands. If you work on product
-    footprinting, EPDs, or sustainability data infrastructure — this site is for you.
+    footprinting, EPDs, or sustainability data infrastructure, this site is for you.
     Here you'll find case studies of tools I've built and where to reach me.
   </p>
+
+  <h2>Work</h2>
+  <ul class="projects">
+    <li>
+      <a href="/work/eol-fixer">The EoL Fixer</a>
+      <p>
+        The web app that models end-of-life for every Ecochain EPD since 2025: 70% less
+        modelling time, auditable across five programme operators.
+      </p>
+    </li>
+    <li>
+      <a href="/work/eol-report-writer">The EoL Report Writer</a>
+      <p>
+        The second half of the production line: a skill that assembles verifier-facing
+        EoL report sections, every number cited by fact ID.
+      </p>
+    </li>
+  </ul>
 
   <h2>Projects</h2>
   <ul class="projects">
@@ -18,6 +36,28 @@ import Base from '../layouts/Base.astro';
       <p>
         Open-source pipeline that extracts life-cycle inventory data from academic papers
         into a queryable graph.
+      </p>
+    </li>
+    <li>
+      <a href="/projects/paper-trail">The Paper Trail</a>
+      <p>
+        Context engineering at work: turning scattered client history into governed,
+        agent-readable knowledge.
+      </p>
+    </li>
+    <li>
+      <a href="/projects/radar">The Radar</a>
+      <p>
+        A pipeline that turns public LinkedIn chatter and EU official sources into
+        structured, verifiable regulatory intelligence.
+      </p>
+    </li>
+    <li>
+      <a href="/projects/portfarmlio">PORTFARMLIO</a>
+      <p>
+        My algorithmic trading platform, farming-themed: a strategy-agnostic engine with
+        plug-in strategy bundles and a rigor-enforcing backtest harness, paper trading
+        by default and live trading double-gated.
       </p>
     </li>
   </ul>

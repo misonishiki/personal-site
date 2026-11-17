@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>PORTFARMLIO</title>
+<style>
+  /* SIMPLIFIED PALETTE: acid green (primary) + magenta (secondary) on near-black.
+     red = danger only; amber kept only for the sun. cyan is folded into green. */
+  :root { --bg:#0a0612; --mag:#ff2bd6; --cyan:#9bdc1e; --acid:#b6ff00;
+          --amber:#ffd400; --red:#ff2e57; --dim:#8a82a6; --fg:#ece8f0;
+          --ground:#1c4a16; --ground2:#163a12; --dirt:#33271a; --ink:#07060d; }
+  * { box-sizing:border-box; image-rendering:pixelated; animation:none !important; }
+  body { margin:0; min-height:100vh; color:var(--fg);
+         font:13px/1.5 ui-monospace,Menlo,Consolas,monospace; letter-spacing:.3px;
+         background:
+           repeating-linear-gradient(0deg, rgba(0,240,255,.05) 0 2px, transparent 2px 4px),
+           radial-gradient(circle at 12% -10%, rgba(0,240,255,.12), transparent 55%),
+           radial-gradient(circle at 90% 0%, rgba(255,43,214,.18), transparent 52%),
+           var(--bg); }
+  a { color:var(--cyan); }
+  header { padding:14px 22px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+           border-bottom:4px solid var(--mag);
+           background:linear-gradient(90deg, rgba(255,43,214,.16), rgba(0,240,255,.08)); }
+  .title { display:block; height:74px; width:auto; }
+  .sub { color:var(--cyan); font-size:11px; letter-spacing:2px; text-shadow:0 0 6px var(--cyan); }
+  .spacer { flex:1; }
+  .stamp { color:var(--dim); font-size:11px; }
+  .switch { font:700 12px ui-monospace,Menlo,monospace; letter-spacing:1px; text-decoration:none;
+            padding:5px 12px; border:2px solid var(--acid); color:var(--acid); border-radius:4px;
+            box-shadow:2px 2px 0 var(--ink); }
+  .switch:hover { background:var(--acid); color:var(--ink); }
+  .shutdown { position:fixed; inset:0; z-index:9999; display:none; background:#000; overflow:hidden; }
+  .gate { font-size:12px; font-weight:900; padding:6px 13px; letter-spacing:1px; border:3px solid;
+          box-shadow:4px 4px 0 var(--ink); transform:skew(-7deg); }
+  .gate.open { color:var(--acid); border-color:var(--acid); }
+  @keyframes blink { 50% { opacity:.3 } }
+
+  #hero { margin:20px auto 0; max-width:min(1320px, calc(100% - 44px));
+          border:4px solid var(--acid); border-radius:8px; overflow:hidden;
+          box-shadow:8px 8px 0 rgba(255,43,214,.35); }
+  .sky { height:216px; position:relative; border-bottom:4px solid var(--ink); overflow:hidden;
+         background:linear-gradient(180deg, rgba(255,43,214,.4), rgba(0,240,255,.12)); }
+  .sun { position:absolute; right:26px; top:14px; font-size:52px; animation:bob 3s ease-in-out infinite;
+         filter:drop-shadow(0 0 14px var(--amber)); }
+  .cloud { position:absolute; top:16px; font-size:30px; opacity:.85; animation:cloud 26s linear infinite; }
+  @keyframes cloud { from { left:-12% } to { left:108% } }
+  .barn { position:absolute; left:50%; bottom:6px; transform:translateX(-50%); margin:0;
+          font-size:13px; line-height:1.05; white-space:pre; color:var(--mag);
+          text-shadow:2px 2px 0 var(--ink); }
+  .skytag { position:absolute; left:16px; top:8px; font-size:11px;
+            font-weight:900; letter-spacing:2px; color:#fff; text-shadow:2px 2px 0 var(--ink); }
+  .pasture { height:54px; position:relative; border-top:4px solid var(--ink); overflow:hidden;
+             background:repeating-linear-gradient(90deg,var(--ground) 0 11px,var(--ground2) 11px 22px); }
+  .animal { position:absolute; bottom:7px; font-size:27px; animation:wander 7s ease-in-out infinite; }
+  .a1{left:3%;animation-delay:0s} .a2{left:19%;animation-delay:-1.4s} .a3{left:35%;animation-delay:-2.6s}
+  .a4{left:52%;animation-delay:-0.7s} .a5{left:68%;animation-delay:-3.2s} .a6{left:84%;animation-delay:-1.9s}
+  @keyframes wander { 0%,100%{transform:translateX(0) scaleX(1)} 30%{transform:translateX(20px) scaleX(1)}
+                      50%{transform:translateX(30px) scaleX(-1)} 80%{transform:translateX(8px) scaleX(-1)} }
+  .land { display:flex; min-height:260px; align-items:stretch;
+          background:repeating-linear-gradient(180deg,var(--ground2) 0 9px,var(--ground) 9px 18px); }
+  .parcel { position:relative; border-right:4px solid var(--ink); padding:9px 10px;
+            display:flex; flex-direction:column; min-width:90px; overflow:hidden; }
+  .parcel.free { background:repeating-linear-gradient(45deg,var(--dirt) 0 9px,#3c2e1f 9px 18px); }
+  .parcel:last-child { border-right:none; }
+  .pname { font-weight:900; font-size:11px; letter-spacing:1px; color:#fff;
+           text-shadow:2px 2px 0 var(--ink); margin-bottom:2px; }
+  .pmood { font-size:26px; line-height:1; animation:bob 2.4s ease-in-out infinite; }
+  .pcrops { flex:1; display:flex; flex-wrap:wrap; align-content:flex-end; gap:2px; padding:4px 0; }
+  .pcrops .t { font-size:15px; }
+  .pcrops .t.good{animation:sway 2.4s ease-in-out infinite} .pcrops .t.hot{animation:shake .25s infinite}
+  .pmeter { height:9px; border:2px solid rgba(0,0,0,.5); border-radius:3px; background:rgba(0,0,0,.4); overflow:hidden; }
+  .pmeter > span { display:block; height:100%; background:linear-gradient(90deg,var(--acid),var(--cyan)); }
+  .pmeter > span.full { background:linear-gradient(90deg,var(--amber),var(--red)); }
+  .psmall { font-size:9.5px; color:#d8ffce; margin-top:2px; text-shadow:1px 1px 0 var(--ink); }
+  .parcel.free .pname { color:var(--amber); }
+  .parcel.free .psmall { color:#e9d9b0; }
+
+  #summary { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding:14px 22px 0; max-width:1320px; margin:0 auto; }
+  .sbox { border:3px solid var(--cyan); border-radius:6px; padding:12px 14px; box-shadow:4px 4px 0 rgba(0,240,255,.3);
+          background:linear-gradient(160deg, rgba(0,240,255,.06), rgba(255,43,214,.05)); }
+  .sbox .v { font-size:24px; font-weight:900; letter-spacing:1px; }
+  .sbox .l { font-size:10.5px; color:var(--dim); letter-spacing:1px; text-transform:uppercase; }
+
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; padding:18px 22px; max-width:1320px; margin:0 auto; }
+  .pen { border:3px solid var(--cyan); border-radius:4px;
+         box-shadow:5px 5px 0 rgba(255,43,214,.35), inset 0 0 40px rgba(0,240,255,.06);
+         background:linear-gradient(170deg, rgba(0,240,255,.05), rgba(255,43,214,.05)); overflow:hidden; }
+  .pen.fallow { border-color:#3a3350; box-shadow:5px 5px 0 rgba(0,0,0,.4); opacity:.7; filter:grayscale(.6); }
+  .pentop { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:2px dashed rgba(255,255,255,.15);
+            background:linear-gradient(90deg, rgba(255,43,214,.12), transparent); }
+  .face { font-size:34px; line-height:1; animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob { 50% { transform:translateY(-4px) } }
+  .pentop h2 { margin:0; font-size:16px; letter-spacing:1px; color:var(--acid); text-shadow:2px 2px 0 var(--mag); }
+  .kind { color:var(--mag); font-size:10px; letter-spacing:1px; text-transform:uppercase; }
+  .badge { font-size:10px; font-weight:900; padding:3px 8px; letter-spacing:1px; border-radius:2px; box-shadow:2px 2px 0 rgba(0,0,0,.4); }
+  .badge.on { color:var(--ink); background:var(--acid); }
+  .badge.off { color:var(--dim); border:2px solid var(--dim); }
+  .pbody { padding:12px 14px 14px; }
+  .desc { color:var(--dim); font-size:11.5px; margin-bottom:10px; }
+  .cond { font-size:11px; background:rgba(0,0,0,.25); border-left:3px solid var(--amber); padding:6px 9px; margin-bottom:12px; }
+  .cond b { color:var(--amber); }
+  .crop { margin:10px 0; }
+  .croprow { display:flex; align-items:center; gap:8px; font-size:11.5px; margin-bottom:5px; }
+  .croprow .nm { font-weight:900; color:var(--fg); letter-spacing:1px; }
+  .croprow .lbl { font-size:10px; letter-spacing:1px; padding:1px 6px; border:1px solid; border-radius:2px; }
+  .croprow .pnl { margin-left:auto; font-weight:700; }
+  .field { display:flex; flex-wrap:wrap; gap:3px; padding:8px; border-radius:3px;
+           background:repeating-linear-gradient(45deg,#241733 0 6px,#2a1d3a 6px 12px); border:2px solid rgba(0,0,0,.4); }
+  .tile { width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:14px; border-radius:2px; background:rgba(0,0,0,.25); }
+  .tile.good { animation:sway 2.4s ease-in-out infinite; text-shadow:0 0 6px var(--acid); }
+  .tile.warn { animation:sway 1.6s ease-in-out infinite; filter:saturate(.7); }
+  .tile.hot  { animation:shake .25s infinite; text-shadow:0 0 8px var(--red); }
+  @keyframes sway { 25%{transform:rotate(-7deg)} 75%{transform:rotate(7deg)} }
+  @keyframes shake { 25%{transform:translate(1px,-1px)} 75%{transform:translate(-1px,1px)} }
+  .meter { height:14px; margin:12px 0 4px; border:2px solid rgba(0,240,255,.4); border-radius:3px; background:rgba(0,0,0,.4); overflow:hidden; }
+  .meter > span { display:block; height:100%; background:repeating-linear-gradient(90deg, var(--acid) 0 6px, var(--cyan) 6px 12px); }
+  .meter > span.full { background:repeating-linear-gradient(90deg, var(--amber) 0 6px, var(--red) 6px 12px); }
+  .small { font-size:10.5px; color:var(--dim); }
+  .empty { color:var(--acid); font-size:11.5px; font-style:italic; padding:6px 0; }
+  .good { color:var(--acid); } .warn { color:var(--amber); } .hot { color:var(--red); } .mid { color:var(--cyan); }
+  .pos { color:var(--acid); } .neg { color:var(--red); }
+  footer { padding:8px 22px 30px; color:var(--dim); font-size:11px; line-height:1.7; max-width:1320px; margin:0 auto; }
+  [data-tip]{ position:relative; }
+  [data-tip]:hover::after{ content:attr(data-tip); position:absolute; left:0; top:calc(100% + 4px);
+    z-index:80; min-width:150px; max-width:280px; white-space:normal; line-height:1.45;
+    background:var(--ink,#07060d); color:var(--acid,#b6ff00); border:1px solid var(--acid,#b6ff00);
+    padding:7px 10px; font-size:11px; border-radius:3px; box-shadow:3px 3px 0 var(--mag,#ff2bd6);
+    pointer-events:none; font-weight:400; letter-spacing:.2px; }
+</style>
+</head>
+<body>
+<header>
+  <svg class="title" viewBox="0 0 660 96" preserveAspectRatio="xMinYMid meet" role="img" aria-label="PORTFARMLIO">
+    <defs>
+      <linearGradient id="pf" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffa8ec"></stop><stop offset="0.5" stop-color="#ff2bd6"></stop>
+        <stop offset="1" stop-color="#7a0d5f"></stop>
+      </linearGradient>
+    </defs>
+    <g transform="skewX(-9)">
+      <text x="22" y="76" font-family="Impact,'Arial Black',sans-serif" font-weight="900" font-size="78" letter-spacing="1" fill="#07060d">PORTFARMLIO</text>
+      <text x="14" y="68" font-family="Impact,'Arial Black',sans-serif" font-weight="900" font-size="78" letter-spacing="1" fill="url(#pf)" stroke="#07060d" stroke-width="4" paint-order="stroke" stroke-linejoin="round">PORTFARMLIO</text>
+    </g>
+  </svg>
+  <span class="sub">▓▒░ the whole farm · land = your capital · crops = positions ░▒░</span>
+  <span class="spacer"></span>
+  <a href="/portfarmlio/" class="switch">◀ DASHBOARD</a>
+  <span id="gate" class="gate open">🚪 GATES OPEN · +3.0%</span>
+  <span id="stamp" class="stamp">snapshot 2026-11-17</span>
+</header>
+
+<section id="hero">
+  <div class="sky">
+    <span class="cloud">☁️</span>
+    <span class="skytag">▓ THE WHOLE FARM ▓ <span id="farmcap">· land = $230,121</span></span>
+    <span class="sun">☺</span>
+    <pre class="barn">       ,@@@@@@.                  _..--^--.._
+     ,@@@@@@@@@@.             ,-'          '-,       ,---.       ,@@@.
+    @@@@@@@@@@@@@@           /   |##|   |##|   \      |:::|     ,@@@@@@.
+    @@@@@@@@@@@@@@          /    |##|   |##|    \     |:::|     @@@@@@@@
+     '@@@@@@@@@@'          |--------------------|     |:::|     '@@@@@'
+        \ || /            |  |##| |##| |##| |##||     |:::|        ||
+          ||              |  |##| |##| |##| |##||     |   |        ||
+          ||              |____________________|______|___|        ||
+  ╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫══╫</pre>
+  </div>
+  <div class="land" id="land"><div class="parcel" style="flex:0 0 10%"><div class="pname">ai_puts <span class="pmood">😄</span></div><div class="pcrops"><span class="t good">🌿</span><span class="t warn">🥀</span><span class="t warn">🥀</span></div><div class="pmeter"><span class="" style="width:43.47%"></span></div><div class="psmall">$23,012 field · 43% sown</div></div><div class="parcel" style="flex:0 0 20%"><div class="pname">green_wave <span class="pmood">😱</span></div><div class="pcrops"><span class="t hot">🔥</span><span class="t good">🌿</span><span class="t good">🌿</span><span class="t hot">🔥</span><span class="t good">🌿</span><span class="t good">🌿</span><span class="t good">🌿</span><span class="t hot">🔥</span></div><div class="pmeter"><span class="full" style="width:100%"></span></div><div class="psmall">$46,024 field · 313% sown</div></div><div class="parcel free" style="flex:0 0 70%"><div class="pname">🌾 open land</div><div class="pcrops"><span class="t">🌾</span><span class="t">🌾</span><span class="t">🌿</span></div><div class="psmall">$161,085 free capital · unallocated</div></div></div>
+  <div class="pasture">
+    <span class="animal a1">🐄</span><span class="animal a2">🐖</span><span class="animal a3">🐑</span>
+    <span class="animal a4">🐔</span><span class="animal a5">🐐</span><span class="animal a6">🦆</span>
+  </div>
+</section>
+
+<section id="summary">
+  <div class="sbox" style="border-color:var(--acid)"><div id="sCap" class="v">$230,121</div><div class="l">allocated capital (farm size)</div></div>
+  <div class="sbox" style="border-color:var(--cyan)"><div id="sSown" class="v">$153,830 · +111.4%</div><div class="l">sown · capital deployed</div></div>
+  <div class="sbox" style="border-color:var(--mag)"><div id="sPnl" class="v pos">n/a</div><div class="l">day P&amp;L</div></div>
+</section>
+
+<main id="farm"><section class="pen "><div class="pentop"><span class="face">😄</span><div><h2>ai_puts <span class="badge on">PLANTED</span></h2><div class="kind">discretionary · options · bearish (defined-risk)</div></div></div><div class="pbody"><div class="desc">Buys PUTS on a watchlist of AI names, a bearish bet with defined risk (max loss = premium paid). Resolves a put ~30 days out per name, sized by premium, sold to close near expiry. Exempt from the monitored stop (loss is already capped by the contract).</div><div class="cond">🌦 field ≤ <b>+10.0%</b> of farm · frost ❄️ <b>15%</b> · ≤ <b>6</b> crops</div><div class="crop"><div class="croprow"><span class="nm">SMCI260911P00038000 ▼</span><span class="lbl good">PUT</span><span class="pnl pos">+$6,454</span></div><div class="field"><div class="tile good">🛡️</div><div class="tile good">🛡️</div><div class="tile good">🛡️</div><div class="tile good">🛡️</div><div class="tile good">🛡️</div><div class="tile good">🛡️</div><div class="tile good">🛡️</div></div><div class="small">7 contracts @ $267 · defined-risk · max loss = premium</div></div><div class="crop"><div class="croprow"><span class="nm">PLTR260911P00170000 ▼</span><span class="lbl warn">PUT</span><span class="pnl neg">$-462</span></div><div class="field"><div class="tile warn">🛡️</div><div class="tile warn">🛡️</div><div class="tile warn">🛡️</div></div><div class="small">3 contracts @ $545 · defined-risk · max loss = premium</div></div><div class="crop"><div class="croprow"><span class="nm">NVDA260911P00225000 ▼</span><span class="lbl warn">PUT</span><span class="pnl neg">$-1,352</span></div><div class="field"><div class="tile warn">🛡️</div><div class="tile warn">🛡️</div></div><div class="small">2 contracts @ $930 · defined-risk · max loss = premium</div></div><div class="small">field sown $10,004 / $23,012 (43%)</div><div class="meter"><span class="" style="width:43.47%"></span></div></div></section><section class="pen "><div class="pentop"><span class="face">😱</span><div><h2>green_wave <span class="badge on">PLANTED</span></h2><div class="kind">discretionary · event-driven (midterms) · long-only</div></div></div><div class="pbody"><div class="desc">Blue-wave midterms rotation. Buys a curated basket of clean-energy names beaten down under the current administration, holds through the 2026-11-03 US midterms on the thesis that Democratic wins re-rate the sector, then exits a few trading days after the results.</div><div class="cond">🌦 field ≤ <b>+20.0%</b> of farm · frost ❄️ <b>15%</b> · ≤ <b>10</b> crops</div><div class="cond">🗳 midterms 2026-11-03: entry window <b>CLOSED</b></div><div class="crop"><div class="croprow"><span class="nm">FSLR ▲</span><span class="lbl hot">WITHERING</span><span class="pnl neg">$-1,616</span></div><div class="field"><div class="tile hot">🔥</div></div><div class="small">8 sh @ $227.69 · frost ❄️ $193.54 · 0% life left</div></div><div class="crop"><div class="croprow"><span class="nm">ENPH ▲</span><span class="lbl good">THRIVING</span><span class="pnl pos">+$1,435</span></div><div class="field"><div class="tile good">🌿</div></div><div class="small">47 sh @ $41.06 · frost ❄️ $34.9 · 100% life left</div></div><div class="crop"><div class="croprow"><span class="nm">RUN ▲</span><span class="lbl good">THRIVING</span><span class="pnl pos">+$7,631</span></div><div class="field"><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div></div><div class="small">188 sh @ $10.25 · frost ❄️ $8.71 · 100% life left</div></div><div class="crop"><div class="croprow"><span class="nm">NEE ▲</span><span class="lbl hot">WITHERING</span><span class="pnl neg">$-1,419</span></div><div class="field"><div class="tile hot">🔥</div></div><div class="small">22 sh @ $86.11 · frost ❄️ $73.19 · 0% life left</div></div><div class="crop"><div class="croprow"><span class="nm">PLUG ▲</span><span class="lbl good">THRIVING</span><span class="pnl pos">+$89,213</span></div><div class="field"><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div></div><div class="small">841 sh @ $2.3 · frost ❄️ $1.95 · 100% life left</div></div><div class="crop"><div class="croprow"><span class="nm">CHPT ▲</span><span class="lbl good">THRIVING</span><span class="pnl pos">+$31,243</span></div><div class="field"><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div><div class="tile good">🌿</div></div><div class="small">311 sh @ $6.2 · frost ❄️ $5.27 · 100% life left</div></div><div class="crop"><div class="croprow"><span class="nm">CWEN ▲</span><span class="lbl good">THRIVING</span><span class="pnl pos">+$3,289</span></div><div class="field"><div class="tile good">🌿</div></div><div class="small">55 sh @ $34.75 · frost ❄️ $29.54 · 100% life left</div></div><div class="crop"><div class="croprow"><span class="nm">BE ▲</span><span class="lbl hot">WITHERING</span><span class="pnl neg">$-1,013</span></div><div class="field"><div class="tile hot">🔥</div></div><div class="small">7 sh @ $245 · frost ❄️ $208.25 · 0% life left</div></div><div class="small">field sown $143,826 / $46,024 (313%)</div><div class="meter"><span class="full" style="width:100%"></span></div></div></section><section class="pen fallow"><div class="pentop"><span class="face">⬛</span><div><h2>lockup_expiry <span class="badge off">FALLOW</span></h2><div class="kind">systematic · calendar-driven · short-biased</div></div></div><div class="pbody"><div class="desc">IPO lock-up expiry. Shorts names with material insider overhang a few trading days BEFORE their lock-up expires (a predictable supply shock as previously-restricted shares can hit the market), then covers a few days after. Thresholds in the strategy's config.</div><div class="empty">⬛ fallow, resting, nothing planted</div></div></section><section class="pen fallow"><div class="pentop"><span class="face">⬛</span><div><h2>index_inclusion <span class="badge off">FALLOW</span></h2><div class="kind">systematic · event-driven · long-biased</div></div></div><div class="pbody"><div class="desc">Front-runs the forced buying when a stock is added to a major index (index funds must buy regardless of price). Goes LONG between the announcement and the effective date, then sells into the forced buying around the effective date. Thresholds in the strategy's config.</div><div class="empty">⬛ fallow, resting, nothing planted</div></div></section><section class="pen fallow"><div class="pentop"><span class="face">⬛</span><div><h2>placeholder <span class="badge off">FALLOW</span></h2><div class="kind">test only</div></div></div><div class="pbody"><div class="desc">Trivial smoke-test strategy used to prove the engine loop. Not for trading.</div><div class="empty">⬛ fallow, resting, nothing planted</div></div></section></main>
+<footer id="foot">the whole farm = your capital · each field's width = its exposure cap · open land = unallocated capital<br>🌱 sprouting · 🌿 thriving · 🥀 wilting · 🔥 withering · mood 🥚 awaiting/😄/😐/😟/😱 · each tile ≈ a chunk of shares · frost ❄️ = stop-loss · 🚪 gates = kill-switch.<br>frozen snapshot of the live garden view, paper-trading data, 2026-11-17.</footer>
+
+</body></html>

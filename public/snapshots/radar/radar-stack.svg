@@ -1,0 +1,115 @@
+<svg viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a958c"/>
+    </marker>
+  </defs>
+  <rect width="960" height="500" fill="#141312"/>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="600" y="18" width="10" height="10" rx="2" fill="#6b9dff"/>
+    <text x="616" y="27" fill="#9a958c">LLM pass</text>
+    <rect x="700" y="18" width="10" height="10" rx="2" fill="#9a958c"/>
+    <text x="716" y="27" fill="#9a958c">deterministic</text>
+    <rect x="840" y="18" width="10" height="10" rx="2" fill="#d8a24a"/>
+    <text x="856" y="27" fill="#9a958c">human</text>
+  </g>
+
+  <!-- SOURCES -->
+  <g>
+    <rect x="20" y="70" width="190" height="100" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="20" y="70" width="190" height="6" rx="3" fill="#9a958c"/>
+    <text x="34" y="96" fill="#e8e6e3" font-size="13" font-weight="600">LinkedIn posts</text>
+    <text x="34" y="116" fill="#9a958c" font-size="11.5">watchlist + searches</text>
+    <text x="34" y="132" fill="#9a958c" font-size="11.5">third-party API, no account</text>
+    <text x="34" y="152" fill="#7a766e" font-size="10.5">cost-engineered: $0.76 → $0.04/run</text>
+  </g>
+  <g>
+    <rect x="20" y="180" width="190" height="100" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="20" y="180" width="190" height="6" rx="3" fill="#9a958c"/>
+    <text x="34" y="206" fill="#e8e6e3" font-size="13" font-weight="600">EU official sources</text>
+    <text x="34" y="226" fill="#9a958c" font-size="11.5">Official Journal (SPARQL),</text>
+    <text x="34" y="242" fill="#9a958c" font-size="11.5">EFRAG, Commission press</text>
+    <text x="34" y="262" fill="#7a766e" font-size="10.5">anonymous · fail-soft · never verified</text>
+  </g>
+
+  <!-- arrows sources -> archive -->
+  <line x1="210" y1="120" x2="244" y2="150" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="210" y1="230" x2="244" y2="200" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- RAW ARCHIVE -->
+  <g>
+    <rect x="250" y="115" width="180" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="250" y="115" width="180" height="6" rx="3" fill="#9a958c"/>
+    <text x="264" y="141" fill="#e8e6e3" font-size="13" font-weight="600">Raw archive</text>
+    <text x="264" y="161" fill="#9a958c" font-size="11.5">verbatim, immutable,</text>
+    <text x="264" y="177" fill="#9a958c" font-size="11.5">written first</text>
+    <text x="264" y="199" fill="#7a766e" font-size="10.5">the model never writes here</text>
+  </g>
+  <line x1="430" y1="170" x2="464" y2="170" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- CLASSIFY + VERIFY -->
+  <g>
+    <rect x="470" y="115" width="220" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="470" y="115" width="220" height="6" rx="3" fill="#6b9dff"/>
+    <text x="484" y="141" fill="#e8e6e3" font-size="13" font-weight="600">Classify + verify</text>
+    <text x="484" y="161" fill="#9a958c" font-size="11.5">one LLM pass per post:</text>
+    <text x="484" y="177" fill="#9a958c" font-size="11.5">research-question tag, tone,</text>
+    <text x="484" y="193" fill="#9a958c" font-size="11.5">concerns, claim verdict</text>
+    <text x="484" y="213" fill="#7a766e" font-size="10.5">failures degrade, never abort the run</text>
+  </g>
+  <line x1="690" y1="170" x2="724" y2="170" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ANNOTATIONS -->
+  <g>
+    <rect x="730" y="115" width="210" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="730" y="115" width="210" height="6" rx="3" fill="#9a958c"/>
+    <text x="744" y="141" fill="#e8e6e3" font-size="13" font-weight="600">Annotations</text>
+    <text x="744" y="161" fill="#9a958c" font-size="11.5">regenerable artifacts,</text>
+    <text x="744" y="177" fill="#9a958c" font-size="11.5">stored alongside the archive</text>
+    <text x="744" y="199" fill="#7a766e" font-size="10.5">raw records are never touched</text>
+  </g>
+
+  <!-- annotations -> themes (dotted, down-left) -->
+  <path d="M790,225 L790,250 L640,250 L640,274" fill="none" stroke="#9a958c" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+  <!-- annotations -> outputs -->
+  <line x1="835" y1="225" x2="835" y2="274" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- THEME CLUSTERING -->
+  <g>
+    <rect x="470" y="280" width="220" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="470" y="280" width="220" height="6" rx="3" fill="#6b9dff"/>
+    <text x="484" y="306" fill="#e8e6e3" font-size="13" font-weight="600">Theme clustering</text>
+    <text x="484" y="326" fill="#9a958c" font-size="11.5">827 unique phrasings →</text>
+    <text x="484" y="342" fill="#9a958c" font-size="11.5">~65 canonical labels</text>
+    <text x="484" y="362" fill="#7a766e" font-size="10.5">batched, resumable,</text>
+    <text x="484" y="377" fill="#7a766e" font-size="10.5">coverage enforced in code</text>
+  </g>
+  <line x1="690" y1="335" x2="724" y2="335" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- OUTPUTS -->
+  <g>
+    <rect x="730" y="280" width="210" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="730" y="280" width="210" height="6" rx="3" fill="#9a958c"/>
+    <text x="744" y="306" fill="#e8e6e3" font-size="13" font-weight="600">Outputs</text>
+    <text x="744" y="326" fill="#9a958c" font-size="11.5">insights dashboards,</text>
+    <text x="744" y="342" fill="#9a958c" font-size="11.5">notes inbox (tag-routed),</text>
+    <text x="744" y="358" fill="#9a958c" font-size="11.5">research-question kanban</text>
+  </g>
+
+  <!-- HUMAN -->
+  <g>
+    <rect x="250" y="280" width="180" height="110" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="250" y="280" width="180" height="6" rx="3" fill="#d8a24a"/>
+    <text x="264" y="306" fill="#e8e6e3" font-size="13" font-weight="600">Human</text>
+    <text x="264" y="326" fill="#9a958c" font-size="11.5">opens proposed questions,</text>
+    <text x="264" y="342" fill="#9a958c" font-size="11.5">curates watchlist &amp; sources,</text>
+    <text x="264" y="358" fill="#9a958c" font-size="11.5">reads triage, decides</text>
+  </g>
+  <!-- human feeds the loops -->
+  <line x1="430" y1="335" x2="464" y2="335" stroke="#9a958c" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+
+  <!-- caption strip -->
+  <text x="30" y="450" fill="#7a766e" font-size="11" font-style="italic">runs unattended on a schedule — 5×/day, ~26 posts/day, ~$13/month steady state; the human only does the judgment calls</text>
+</svg>

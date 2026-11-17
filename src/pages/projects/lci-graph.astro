@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 // parse the JSON braces as template expressions.
 const jsonldSnippet = `{
   "@type": "Process",
-  "name": "CSTR 10 bar using serpentine — state-of-the-art",
+  "name": "CSTR 10 bar using serpentine, state-of-the-art",
   "processType": "UNIT_PROCESS",
   "exchanges": [
     {
@@ -28,20 +28,21 @@ const jsonldSnippet = `{
   <p class="backlink"><a href="/">← All projects</a></p>
   <h1>LCI·GRAPH</h1>
   <p class="tagline">An open-source pipeline that turns the LCA literature into a queryable inventory database.</p>
+  <p><a href="https://lci.alissa.ing/">Try the live magnet test case ↗</a></p>
 
   <nav class="toc" aria-label="Contents">
     <a href="#the-problem">The problem</a>
     <a href="#what-it-does">What it does</a>
-    <a href="#part-1">Part 1 — extraction</a>
-    <a href="#interlude">Interlude — identity</a>
-    <a href="#part-2">Part 2 — graph layer</a>
+    <a href="#part-1">Part 1, extraction</a>
+    <a href="#interlude">Interlude, identity</a>
+    <a href="#part-2">Part 2, graph layer</a>
     <a href="#where-it-stands">Where it stands</a>
   </nav>
 
   <h2 id="the-problem">The problem</h2>
   <p>
     Some of the best life-cycle inventory data in the field is published in academic
-    papers — and then effectively buried. The numbers live in PDF tables and
+    papers, and then effectively buried. The numbers live in PDF tables and
     supplementary files, in whatever format the authors happened to use. If you need
     them, you re-transcribe them by hand; if you want to compare across studies, you
     first have to undo every paper's idiosyncrasies. Practitioners redo this work
@@ -52,7 +53,7 @@ const jsonldSnippet = `{
   <p>
     LCI·GRAPH ingests a paper and its supplements, extracts the inventory tables,
     links every flow to a canonical dataset, and stores the result in a database you
-    can actually query — then exports to the formats practitioners already use
+    can actually query, then exports to the formats practitioners already use
     (openLCA JSON-LD, SimaPro CSV, ILCD, EcoSpold2).
   </p>
 
@@ -66,12 +67,12 @@ const jsonldSnippet = `{
 
   <figure>
     <img src="/snapshots/lci-graph/studies-browser.png" alt="LCI·GRAPH study browser: a list of ingested papers with DOI, system boundary, background database, and review status." loading="lazy" />
-    <figcaption>Papers in the database — each with its DOI, system boundary, and background database preserved.</figcaption>
+    <figcaption>Papers in the database, each with its DOI, system boundary, and background database preserved.</figcaption>
   </figure>
 
-  <h2 id="part-1">Part 1 — the extraction pipeline</h2>
+  <h2 id="part-1">Part 1, the extraction pipeline</h2>
   <p>
-    The pipeline's job is not just to find the numbers in a paper — it's to keep
+    The pipeline's job is not just to find the numbers in a paper, it's to keep
     everything that makes those numbers meaningful. On the left: a table buried on page
     S12 of a supplementary PDF. On the right: the same inventory as typed, unit-checked
     rows in the database, every value traceable back to that table.
@@ -81,14 +82,14 @@ const jsonldSnippet = `{
   <figure>
     <img src="/snapshots/lci-graph/paper-table-s6.png" alt="Table S6 from the paper's supplementary PDF: LCI data of CSTR 10 bar using serpentine, with columns for electricity, thermal energy, and carbon footprint per life-cycle stage." loading="lazy" />
     <figcaption>
-      Before: Table S6 in the supplementary PDF of <a href="https://doi.org/10.1039/D0SE00190B">Ostovari et al. 2020</a> — electricity,
+      Before: Table S6 in the supplementary PDF of <a href="https://doi.org/10.1039/D0SE00190B">Ostovari et al. 2020</a>, electricity,
       thermal energy, and footprint per life-cycle stage, with footnoted assumptions.
     </figcaption>
   </figure>
   <figure>
     <img src="/snapshots/lci-graph/extracted-cstr10bar.png" alt="The same table after extraction into LCI·GRAPH: typed flows with amounts and units, methodology context, export buttons, and data-quality warnings." loading="lazy" />
     <figcaption>
-      After: the same table in LCI·GRAPH. The 20 / 324 / 441 kWh rows are all there —
+      After: the same table in LCI·GRAPH. The 20 / 324 / 441 kWh rows are all there,
       and where the paper is ambiguous (an empty thermal-energy cell), the pipeline
       raises an explicit data-quality warning instead of silently guessing. The
       footnotes survived too, as assumptions on the dataset.
@@ -98,20 +99,20 @@ const jsonldSnippet = `{
   <h3>What has to survive extraction</h3>
   <p>
     <strong>Amounts are data, not text to clean up.</strong> Every amount is stored as a
-    verbatim string, so scientific notation survives — and an explicit zero ("PPS
-    granulate — 0 g/kg") is kept as an author claim (<em>we looked; it's nothing</em>),
+    verbatim string, so scientific notation survives, and an explicit zero ("PPS
+    granulate, 0 g/kg") is kept as an author claim (<em>we looked; it's nothing</em>),
     not dropped as a missing value.
   </p>
   <p>
     <strong>The reference flow is the denominator everything hangs on.</strong> Each
     process is stored normalized to one unit of its declared reference flow ("per kg of
     REM alloy"). When processes chain together, upstream inventories are rescaled by the
-    exchange ratio at read time — the scaled version is never stored, because that's
+    exchange ratio at read time, the scaled version is never stored, because that's
     where conversion errors would live.
   </p>
   <p>
-    <strong>An inventory without its boundary conditions is not data, it's decoration.</strong> Every extracted dataset carries its methodology context — system boundary, LCIA
-    method, allocation, source DOI — displayed next to the numbers wherever they
+    <strong>An inventory without its boundary conditions is not data, it's decoration.</strong> Every extracted dataset carries its methodology context, system boundary, LCIA
+    method, allocation, source DOI, displayed next to the numbers wherever they
     appear. Two inventories are only comparable when you know what each one counted.
   </p>
   <figure>
@@ -124,7 +125,7 @@ const jsonldSnippet = `{
     <img src="/snapshots/lci-graph/pipeline-stack.svg" alt="Pipeline diagram: input paper and supplements flow through a deterministic routing gate into multi-pass LLM extraction, then deterministic and LLM validation, then human review, then SQLite, then one-click exports." loading="lazy" />
     <figcaption>
       The pipeline, end to end. Blue is where the model runs, grey is deterministic code,
-      orange is the human. The model only ever drafts — the transitions between stages
+      orange is the human. The model only ever drafts, the transitions between stages
       are all rules.
     </figcaption>
   </figure>
@@ -134,7 +135,7 @@ const jsonldSnippet = `{
     document is parsed to text with a table registry (pdfplumber, python-docx, openpyxl),
     a first pass reads the main paper for metadata and boundary context only, and a
     second extracts the LCI tables in one structured call. PDF-only papers go vision:
-    the model reads the PDF pages directly — the corpus's gold standard, at 3–5× the
+    the model reads the PDF pages directly, the corpus's gold standard, at 3–5× the
     cost. A plain text path is the last-resort fallback.
   </p>
   <p>
@@ -142,7 +143,7 @@ const jsonldSnippet = `{
     as <em>pending review</em>: deterministic checks run first (schema, inter-process
     links, variable amounts resolved against the table registry, ghost processes
     dropped), then a final LLM pass re-sends every table's JSON with its source table
-    and asks "does this match?" Corrections are made in a review interface — and those
+    and asks "does this match?" Corrections are made in a review interface, and those
     corrections feed back as extraction rules, so the same mistake is not made twice.
   </p>
   <p>
@@ -152,7 +153,7 @@ const jsonldSnippet = `{
   </p>
   <figure>
     <img src="/snapshots/lci-graph/meta-analysis.png" alt="Meta-analysis view: canonical materials ranked by number of flows and studies they appear in." loading="lazy" />
-    <figcaption>Once flows are normalized to canonical materials, cross-study questions become answerable — e.g. which materials the literature actually covers.</figcaption>
+    <figcaption>Once flows are normalized to canonical materials, cross-study questions become answerable, e.g. which materials the literature actually covers.</figcaption>
   </figure>
 
   <h3>Export to the tools you already use</h3>
@@ -161,7 +162,7 @@ const jsonldSnippet = `{
     individual process exports with one click to the formats practitioners actually
     work in: <strong>openLCA JSON-LD</strong>, <strong>SimaPro CSV</strong>, <strong>ILCD</strong> (GaBi),
     and <strong>EcoSpold2</strong>. The openLCA export
-    is a standards-compliant JSON-LD package — processes, flows, units, and flow
+    is a standards-compliant JSON-LD package, processes, flows, units, and flow
     properties as linked entities:
   </p>
   <pre>{jsonldSnippet}</pre>
@@ -177,36 +178,36 @@ const jsonldSnippet = `{
     </figcaption>
   </figure>
 
-  <h2 id="interlude">Interlude — normalizing to canonical materials: how corrections become memory</h2>
+  <h2 id="interlude">Interlude, normalizing to canonical materials: how corrections become memory</h2>
   <p>
     Between extraction and the graph layer sits a less glamorous problem that decides
     whether any of the comparison features work at all: <strong>identity</strong>. "What
-    substance is this exchange?" The naive answer — normalize the flow's name, and on
-    a miss <em>create a new material</em> — is a fragmentation generator. After twelve
+    substance is this exchange?" The naive answer, normalize the flow's name, and on
+    a miss <em>create a new material</em>, is a fragmentation generator. After twelve
     studies the database held <strong>616 materials, of which only 12 were shared across
     studies</strong>. One study's electricity was shattered across seven process-specific
-    nodes ("Ball milling — electricity consumption", …) — 28 exchanges — while two
+    nodes ("Ball milling, electricity consumption", …), 28 exchanges, while two
     other papers shared a single canonical <em>Electricity</em>. Cross-paper comparison
     is only as good as this join.
   </p>
   <p>
     The fix rests on three choices. <strong>Read both channels of evidence:</strong> the
-    free-text name <em>and</em> the linked background dataset — "Energy consumption
+    free-text name <em>and</em> the linked background dataset, "Energy consumption
     during electrolysis" shares zero words with <em>Electricity</em>, but its dataset
     reference says <code>market for electricity, medium voltage</code>. <strong>Lookup,
     not retrieval:</strong> with an exact key the right answer is deterministic code,
-    identical every time — embeddings have no concept of "exact hit, stop looking".
+    identical every time, embeddings have no concept of "exact hit, stop looking".
     Only genuinely novel strings earn an LLM, and there the model <em>proposes</em> candidates;
     code owns identity. <strong>Corrections become memory:</strong> every human decision is an event in an append-only log, and memory
-    is rebuilt from it — aliases on materials, a dataset→material map. The channels
+    is rebuilt from it, aliases on materials, a dataset→material map. The channels
     teach each other: a flow matched via its dataset writes its name as an alias, so
     the next paper using that name matches even without a dataset. And on a genuine
-    miss the flow is queued for review instead of minting a new material — the one
+    miss the flow is queued for review instead of minting a new material, the one
     change that stops fragmentation growing.
   </p>
   <p>
     One subtlety: <strong>a dataset is not always an identity.</strong> Papers model
-    substances with proxy datasets — one study's <em>neodymium fluoride</em> rides on a
+    substances with proxy datasets, one study's <em>neodymium fluoride</em> rides on a
     neodymium <em>oxide</em> dataset, deliberately. So identity follows the name
     channel; the dataset channel is evidence; and disagreement between the two is the
     proxy detector, routing the flow to a human with both votes shown.
@@ -217,47 +218,47 @@ const jsonldSnippet = `{
     eval had nothing to replay. What <em>could</em> run before writing any engine code
     was a <strong>retrospective simulation</strong>: replay the corpus in ingest order,
     grow the two-channel memory as the engine would, and measure what it would have
-    known — coverage potential, not correctness.
+    known, coverage potential, not correctness.
   </p>
   <pre>ingest-order replay of 1,039 exchanges, two-channel memory:
-  53.2%  exact (name, dataset) pair replay — mostly repeats within a study
-  10.3%  dataset channel — dataset string already seen in another paper
-   5.2%  name channel — alias seen before
-  31.3%  genuinely cold — no key fires; queue for a human
+  53.2%  exact (name, dataset) pair replay, mostly repeats within a study
+  10.3%  dataset channel, dataset string already seen in another paper
+   5.2%  name channel, alias seen before
+  31.3%  genuinely cold, no key fires; queue for a human
 
 electricity gap spot check:
   all 28 orphaned exchanges share ONE normalized dataset key
-  ("electricity, medium voltage") — the same key backing canonical Electricity.
+  ("electricity, medium voltage"), the same key backing canonical Electricity.
   the dataset channel alone closes the entire enumerated gap.</pre>
   <p>
     Two-thirds of the corpus's exchanges were knowable in advance through channels
     the matcher never read. The caveats mattered too: junk dataset strings ("not
     specified") need a stoplist, a third of flows have no usable dataset reference at
-    all, and one dataset can legitimately back different materials — so the dataset
+    all, and one dataset can legitimately back different materials, so the dataset
     channel alone never gets to decide silently.
   </p>
 
   <h3>First contact with reality</h3>
   <p>
-    Then the design met the corpus, in a first human review pass — and the corpus
+    Then the design met the corpus, in a first human review pass, and the corpus
     taught back. The pass forced the tooling into existence: pending flows
     pre-grouped into <strong>425 decision buckets</strong> by shared dataset key,
     each with evidence-ranked canonical candidates. Twenty decisions later the
-    enumerated electricity gap was closed — all 28 exchanges now point at the
-    single canonical <em>Electricity</em> — and the review queue dropped from
+    enumerated electricity gap was closed, all 28 exchanges now point at the
+    single canonical <em>Electricity</em>, and the review queue dropped from
     1,148 to 1,013 links. Two lessons the design had missed, both now encoded:
   </p>
   <figure>
-    <img src="/snapshots/lci-graph/matching-examples.svg" alt="Two worked matching examples. Left: Co₂, Co2, and Carbon dioxide — three spellings, same emission class — caught by unicode-fold and the synonym table, merged into one canonical with the spellings kept as aliases. Right: silicon carbide consumption (input, market dataset), disposal (waste, treatment dataset), and recovered (avoided product, credit) share one normalized dataset key but are never decided together — buckets split by exchange class." loading="lazy" />
+    <img src="/snapshots/lci-graph/matching-examples.svg" alt="Two worked matching examples. Left: Co₂, Co2, and Carbon dioxide, three spellings, same emission class, caught by unicode-fold and the synonym table, merged into one canonical with the spellings kept as aliases. Right: silicon carbide consumption (input, market dataset), disposal (waste, treatment dataset), and recovered (avoided product, credit) share one normalized dataset key but are never decided together, buckets split by exchange class." loading="lazy" />
     <figcaption>
-      Left — <strong>typography is an identity attack</strong>: three spellings of one
+      Left, <strong>typography is an identity attack</strong>: three spellings of one
       substance had become three materials. Nineteen such duplicate groups hid in the
       corpus; the safe lenses (unicode-fold, curated synonyms) now auto-match at
-      ingest, and a merge keeps every absorbed spelling as an alias — never asked
-      twice. Right — <strong>an exchange's <em>role</em> is part of its
+      ingest, and a merge keeps every absorbed spelling as an alias, never asked
+      twice. Right, <strong>an exchange's <em>role</em> is part of its
       identity</strong>: consumption (a burden you buy), disposal (a burden you pay
       for), and avoided product (a credit, the opposite sign) share a dataset key but
-      are different claims — buckets split by exchange class, so they are never
+      are different claims, buckets split by exchange class, so they are never
       decided together.
     </figcaption>
   </figure>
@@ -265,19 +266,19 @@ electricity gap spot check:
     <img src="/snapshots/lci-graph/matching-stack.svg" alt="Matching-layer architecture: a new flow enters with raw name, dataset reference and exchange class; evidence channels feed a deterministic memory lookup (aliases, dataset map, pair cache rebuilt from the decision log); key hits auto-match, misses go to a human queue where an LLM may only propose; every decision goes through one write path that appends to the log and rebuilds the memory." loading="lazy" />
     <figcaption>
       The pipeline behind it. Grey is deterministic code, orange is the human,
-      blue is the model — which proposes candidates on a genuine miss but never
+      blue is the model, which proposes candidates on a genuine miss but never
       decides identity. Every correction flows through one write path into the
       decision log, and memory is rebuilt from the log.
     </figcaption>
   </figure>
 
-  <h2 id="part-2">Part 2 — the graph layer, put to a falsifiable test</h2>
+  <h2 id="part-2">Part 2, the graph layer, put to a falsifiable test</h2>
   <p>
     The relational store works, but the data underneath it is graph-shaped: activities
     connected by flows, with identity ("what substance is this?"), provenance ("which
     paper says so?"), and hierarchy ("this part belongs to that product"). Every new
     comparison feature kept dying on the relational shape. Still, "use a graph database"
-    is also a fashionable answer — so instead of migrating on faith, I framed it as a
+    is also a fashionable answer, so instead of migrating on faith, I framed it as a
     falsifiable hypothesis and built a proof of concept that was designed to be able to fail.
   </p>
   <p>
@@ -288,29 +289,29 @@ electricity gap spot check:
     that are painful over the relational equivalent. Four sub-claims made it falsifiable:
   </p>
   <p>
-    <strong>H1 — the vocabulary is sufficient.</strong> Both worlds represented
+    <strong>H1, the vocabulary is sufficient.</strong> Both worlds represented
     faithfully, or a sixth node label / ninth edge type has to appear.
   </p>
   <p>
-    <strong>H2 — identity is one problem.</strong> Cross-paper matching ("same
+    <strong>H2, identity is one problem.</strong> Cross-paper matching ("same
     electricity, three papers") and intra-study linkage are both missing edges of the
-    same type, closable by one engine — falsified if either world needs special-casing.
+    same type, closable by one engine, falsified if either world needs special-casing.
   </p>
   <p>
-    <strong>H3 — roll-up works.</strong> A study's internal flows cancel and its boundary
-    exchanges sum to a correct black-box view, with chain math computed at read time —
+    <strong>H3, roll-up works.</strong> A study's internal flows cancel and its boundary
+    exchanges sum to a correct black-box view, with chain math computed at read time,
     falsified by disagreeing with a hand-calculated roll-up.
   </p>
   <p>
-    <strong>H4 — the graph pulls its weight.</strong> The test questions take materially
-    less effort than their SQL equivalents — falsified, honestly, if they don't.
+    <strong>H4, the graph pulls its weight.</strong> The test questions take materially
+    less effort than their SQL equivalents, falsified, honestly, if they don't.
   </p>
   <h3>The vocabulary</h3>
   <p>
-    The heart of the vocabulary is bipartite — <strong>Activities</strong> (things that
+    The heart of the vocabulary is bipartite, <strong>Activities</strong> (things that
     happen) and <strong>Exchanges</strong> (quantified stuff crossing their boundary).
     Exchange is a first-class node for a structural reason: in a property graph, edges
-    can't have edges — and provenance, dataset mapping, and canonical identity all need
+    can't have edges, and provenance, dataset mapping, and canonical identity all need
     something to attach to. Around that heart: a <strong>Material</strong> library for
     identity, <strong>Dataset</strong> for background references, and <strong>Source</strong> so
     every node knows where it came from.
@@ -325,20 +326,21 @@ electricity gap spot check:
 
   <h3>A real paper in the vocabulary</h3>
   <p>
-    This is an actual extraction redrawn in the vocabulary — a study on NdFeB magnet
+    This is an actual extraction redrawn in the vocabulary, a study on NdFeB magnet
     recycling, mapped from the live database. Two design surfaces show up immediately.
     The provider's output and the consumer's input are the same stuff under different
     strings ("milled magnet powder (ca 200 µm)" vs "cleaned, demagnetized, ball-milled
-    EOL magnet") — so intra-study linkage and cross-paper identity are one matching
+    EOL magnet"), so intra-study linkage and cross-paper identity are one matching
     problem, not two. And the 6.45 kg on the chain link is where the denominators
     change: upstream amounts are per kg of powder, downstream per kg of alloy, so
     roll-up math has to multiply through the conversion at read time.
+    Browse it yourself at <a href="https://lci.alissa.ing/">lci.alissa.ing</a>.
   </p>
   <figure>
     <img src="/snapshots/lci-graph/magnet-mapping.svg" alt="Instance diagram of the magnet recycling study: pre-treatment and electrolysis activities connected through exchanges, with the FEEDS chain link carrying the 6.45 kg conversion, an electricity exchange pointing to the canonical Electricity material and its background dataset, variant edges, and provenance edges to the source paper." loading="lazy" />
     <figcaption>
       Study 34 in the graph: two unit processes, their boundary exchanges, the chain
-      link, the canonical-material join, and the scenario-variant edge — all from one
+      link, the canonical-material join, and the scenario-variant edge, all from one
       supplementary table, all traceable.
     </figcaption>
   </figure>
@@ -346,7 +348,7 @@ electricity gap spot check:
   <h3>The test setup</h3>
   <p>
     <strong>The architecture is a read-only projection, not a migration.</strong> SQLite
-    stays the system of record — the LLM extraction pipeline, the evaluation harness, and
+    stays the system of record, the LLM extraction pipeline, the evaluation harness, and
     the web app never touch the graph. A mechanical exporter rebuilds a Neo4j projection
     from it, and if the hypothesis failed I'd delete the projection and nothing was lost:
   </p>
@@ -360,16 +362,16 @@ electricity gap spot check:
   <p>
     Two decisions made the exporter boring, which was the point. First: exchanges are
     first-class nodes (<strong>Exchange-as-node</strong>), so every row type in the
-    relational schema has exactly one graph counterpart — the mapping is 1:1 and the
+    relational schema has exactly one graph counterpart, the mapping is 1:1 and the
     exporter is ≈180 lines with no judgment calls. Second: <strong>full rebuild,
-    always</strong> — no incremental sync, no migration logic, the
+    always</strong>, no incremental sync, no migration logic, the
     projection is disposable by design. The engine is Neo4j 5 in Docker, the production
     target in the specs and the engine both grounding papers used; an embedded Cypher
-    engine was the named fallback if infra friction appeared — the vocabulary and the
+    engine was the named fallback if infra friction appeared, the vocabulary and the
     queries wouldn't change.
   </p>
   <p>
-    <strong>The test was a six-question checklist run on real data</strong> — three
+    <strong>The test was a six-question checklist run on real data</strong>, three
     papers on rare-earth magnet recycling, plus an industrial BoM (an ERP export for a
     polyester knit fabric, three hierarchy levels deep). Two disciplines kept it honest.
     Every answer that could be checked by hand, was: the graph's numbers were diffed
@@ -383,20 +385,20 @@ electricity gap spot check:
     <figcaption>
       An industrial BoM living in the same graph as the paper world: three assembly levels,
       twelve leaf exchanges, eleven canonical materials. The disperse dye at the top
-      is <em>one</em> node consumed by two process steps — in the spreadsheet it's two rows
+      is <em>one</em> node consumed by two process steps, in the spreadsheet it's two rows
       joined only by a human reading the article number.
     </figcaption>
   </figure>
   <p>
-    <strong>The vocabulary held (H1).</strong> Both worlds — academic LCIs and an
-    ERP-sourced BoM — were represented with zero new node labels and zero new edge
+    <strong>The vocabulary held (H1).</strong> Both worlds, academic LCIs and an
+    ERP-sourced BoM, were represented with zero new node labels and zero new edge
     types, and every node traces back to its source: 100% provenance completeness.
     Suppliers rode along as edge properties, and the SAP article numbers gave identity
-    links for free — no fuzzy matching in the ERP world at all.
+    links for free, no fuzzy matching in the ERP world at all.
   </p>
   <p>
     <strong>The identity gap became enumerable (H2).</strong> One study's electricity
-    was fragmented across seven process-specific material nodes — 28 exchanges — while
+    was fragmented across seven process-specific material nodes, 28 exchanges, while
     the other two papers shared a single canonical electricity node. In the graph that
     gap is one query's worth of missing identity edges, closable by a single matching
     engine with no per-study special-casing; in the relational store it was invisible
@@ -404,8 +406,8 @@ electricity gap spot check:
   </p>
   <p>
     <strong>The roll-up math was checked by hand (H3).</strong> Collapsing a study to
-    one black box — internal flows cancel, boundary flows sum, quantities rescale along
-    the chain — matched a hand-calculated roll-up exactly, for all eight scenario
+    one black box, internal flows cancel, boundary flows sum, quantities rescale along
+    the chain, matched a hand-calculated roll-up exactly, for all eight scenario
     variants of the study, including the variants where the chain's conversion
     denominator changes mid-chain. Writing the query surfaced a real design rule: a
     strict black-box must cancel <em>both</em> sides of an internal link, or the
@@ -413,20 +415,20 @@ electricity gap spot check:
   </p>
   <p>
     <strong>The honest nuance (H4).</strong> On flat lookups, the graph and plain SQL
-    tied — near-identical line counts, same results, recorded honestly. The divergence
-    showed up where hierarchy lives: flattening the BoM — "a lot of work" when done by
-    hand for every downstream consumer — is one depth-agnostic traversal
+    tied, near-identical line counts, same results, recorded honestly. The divergence
+    showed up where hierarchy lives: flattening the BoM, "a lot of work" when done by
+    hand for every downstream consumer, is one depth-agnostic traversal
     (<code>PART_OF*1..</code> with a running quantity product), reproducing the
     hand-flattened ERP export exactly, down to 1083.5188 kg of PET chips per tonne of
     fabric through two nested levels. The SQL equivalent is a recursive CTE carrying the
     same running product. So the graph earns its keep on composition, roll-ups, and
-    provenance chains — and that nuance is load-bearing: the migration spec's acceptance
+    provenance chains, and that nuance is load-bearing: the migration spec's acceptance
     criteria are anchored on those hierarchical queries, not on corpus-scale lookups
     where the graph can't justify itself.
   </p>
   <p>
     <strong>The limits, recorded.</strong> One industrial BoM (n=1, textiles) with zero
-    material overlap against the paper corpus — the cross-world join is machinery-tested,
+    material overlap against the paper corpus, the cross-world join is machinery-tested,
     not data-tested. Multi-hop roll-up is untested, because every chain in the corpus is
     depth-1. And line-count is a weak proxy for effort. All three are written into the
     specs as open risks, not swept under the rug.
@@ -434,20 +436,20 @@ electricity gap spot check:
 
   <h2 id="where-it-stands">Where it stands</h2>
   <p>
-    The gate verdict was <strong>GO</strong>: the hypothesis is confirmed — H4 in its
-    nuanced form — and the migration specs were re-scoped on the evidence. The migration
+    The gate verdict was <strong>GO</strong>: the hypothesis is confirmed, H4 in its
+    nuanced form, and the migration specs were re-scoped on the evidence. The migration
     is now defined as the same full-rebuild exporter (the projection stays disposable,
     and match-decision history stays relational). The 28-exchange identity gap the PoC
-    enumerated is meanwhile closed — by the human pass through the new review tooling,
+    enumerated is meanwhile closed, by the human pass through the new review tooling,
     not yet by automation. Next is the unified matching engine, but its job has
-    changed shape: not "close the gap" — make the next pass mostly automatic, by
+    changed shape: not "close the gap", make the next pass mostly automatic, by
     cashing in the coverage the simulation measured (two-thirds of exchanges knowable
     in advance) against the decision log the passes are now accumulating. Then the
     engine joins BoM materials to paper materials, and the production seam lets the
     graph backend replace the relational one behind a flag.
   </p>
   <p class="muted-note">
-    Screenshots are static snapshots of the local platform; there is no live demo —
+    Screenshots are static snapshots of the local platform; there is no live demo,
     the database contains other people's published data, shown here for illustration.
   </p>
 <style>
@@ -487,7 +489,7 @@ electricity gap spot check:
 <script>
   // Scroll-spy: highlight the TOC entry of the section currently in view.
   // (Scroll listener, not IntersectionObserver: fast scrolling can jump an h2
-  // clean across an observer band without ever intersecting it — the active
+  // clean across an observer band without ever intersecting it, the active
   // entry would then stick on the wrong section.)
   const tocLinks = [...document.querySelectorAll('.toc a')];
   const byId = Object.fromEntries(tocLinks.map((a) => [a.hash.slice(1), a]));

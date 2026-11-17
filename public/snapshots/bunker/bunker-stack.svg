@@ -1,0 +1,122 @@
+<svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a958c"/>
+    </marker>
+  </defs>
+  <rect width="960" height="520" fill="#141312"/>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="600" y="18" width="10" height="10" rx="2" fill="#6b9dff"/>
+    <text x="616" y="27" fill="#9a958c">model</text>
+    <rect x="690" y="18" width="10" height="10" rx="2" fill="#9a958c"/>
+    <text x="706" y="27" fill="#9a958c">deterministic</text>
+    <rect x="830" y="18" width="10" height="10" rx="2" fill="#d8a24a"/>
+    <text x="846" y="27" fill="#9a958c">human</text>
+  </g>
+
+  <!-- ROW 1: the work flow -->
+  <!-- human -->
+  <g>
+    <rect x="20" y="70" width="160" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="20" y="70" width="160" height="6" rx="3" fill="#d8a24a"/>
+    <text x="34" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Human</text>
+    <text x="34" y="118" fill="#9a958c" font-size="11.5">sets intent,</text>
+    <text x="34" y="134" fill="#9a958c" font-size="11.5">reviews direction,</text>
+    <text x="34" y="150" fill="#9a958c" font-size="11.5">owns the merge</text>
+    <text x="34" y="172" fill="#7a766e" font-size="10.5">never supervises method</text>
+  </g>
+  <line x1="180" y1="130" x2="234" y2="130" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- planner -->
+  <g>
+    <rect x="240" y="70" width="220" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="240" y="70" width="220" height="6" rx="3" fill="#6b9dff"/>
+    <text x="254" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Planner model</text>
+    <text x="254" y="118" fill="#9a958c" font-size="11.5">spec → tracer-bullet tickets</text>
+    <text x="254" y="134" fill="#9a958c" font-size="11.5">architecture, verification,</text>
+    <text x="254" y="150" fill="#9a958c" font-size="11.5">reviews executor output</text>
+    <text x="254" y="172" fill="#7a766e" font-size="10.5">frontier class · ~10% of spend</text>
+  </g>
+  <line x1="460" y1="130" x2="494" y2="130" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- executor -->
+  <g>
+    <rect x="500" y="70" width="220" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="500" y="70" width="220" height="6" rx="3" fill="#6b9dff"/>
+    <text x="514" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Executor model</text>
+    <text x="514" y="118" fill="#9a958c" font-size="11.5">headless TDD loops,</text>
+    <text x="514" y="134" fill="#9a958c" font-size="11.5">multi-file edits, test runs</text>
+    <text x="514" y="150" fill="#9a958c" font-size="11.5">one worktree per ticket</text>
+    <text x="514" y="172" fill="#7a766e" font-size="10.5">cheaper class · turn-capped</text>
+  </g>
+  <line x1="720" y1="130" x2="754" y2="130" stroke="#9a958c" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- output -->
+  <g>
+    <rect x="760" y="70" width="180" height="120" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="760" y="70" width="180" height="6" rx="3" fill="#9a958c"/>
+    <text x="774" y="96" fill="#e8e6e3" font-size="13" font-weight="600">Output</text>
+    <text x="774" y="118" fill="#9a958c" font-size="11.5">scoped commits,</text>
+    <text x="774" y="134" fill="#9a958c" font-size="11.5">green tests,</text>
+    <text x="774" y="150" fill="#9a958c" font-size="11.5">evidence notes</text>
+    <text x="774" y="172" fill="#7a766e" font-size="10.5">loops back to human review</text>
+  </g>
+  <!-- review loop: output back to human -->
+  <path d="M850,190 L850,214 L100,214 L100,196" fill="none" stroke="#9a958c" stroke-width="1.2" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+
+  <!-- connectors to guardrails -->
+  <line x1="100" y1="190" x2="100" y2="252" stroke="#9a958c" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="350" y1="190" x2="350" y2="252" stroke="#9a958c" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="610" y1="190" x2="610" y2="252" stroke="#9a958c" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- GUARDRAILS BAND -->
+  <rect x="20" y="240" width="920" height="120" rx="8" fill="none" stroke="#2c2a26" stroke-dasharray="5 4"/>
+  <text x="36" y="262" fill="#7a766e" font-size="11" font-style="italic">guardrails — every call, no exceptions</text>
+
+  <g>
+    <rect x="60" y="276" width="260" height="68" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="60" y="276" width="260" height="6" rx="3" fill="#9a958c"/>
+    <text x="74" y="300" fill="#e8e6e3" font-size="12.5" font-weight="600">Quota guard</text>
+    <text x="74" y="320" fill="#9a958c" font-size="11">live usage read gates every session;</text>
+    <text x="74" y="335" fill="#9a958c" font-size="11">blocks over threshold, fail-closed</text>
+  </g>
+  <g>
+    <rect x="360" y="276" width="260" height="68" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="360" y="276" width="260" height="6" rx="3" fill="#9a958c"/>
+    <text x="374" y="300" fill="#e8e6e3" font-size="12.5" font-weight="600">Sandbox</text>
+    <text x="374" y="320" fill="#9a958c" font-size="11">tool execution inside Docker;</text>
+    <text x="374" y="335" fill="#9a958c" font-size="11">advice-only by default</text>
+  </g>
+  <g>
+    <rect x="660" y="276" width="260" height="68" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="660" y="276" width="260" height="6" rx="3" fill="#d8a24a"/>
+    <text x="674" y="300" fill="#e8e6e3" font-size="12.5" font-weight="600">Approval gate</text>
+    <text x="674" y="320" fill="#9a958c" font-size="11">autonomy granted per request,</text>
+    <text x="674" y="335" fill="#9a958c" font-size="11">never per session</text>
+  </g>
+
+  <!-- connectors to memory band -->
+  <line x1="350" y1="360" x2="350" y2="392" stroke="#9a958c" stroke-width="1" stroke-dasharray="3 3"/>
+  <line x1="610" y1="360" x2="610" y2="392" stroke="#9a958c" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- MEMORY & MEASUREMENT BAND -->
+  <rect x="20" y="380" width="920" height="120" rx="8" fill="none" stroke="#2c2a26" stroke-dasharray="5 4"/>
+  <text x="36" y="402" fill="#7a766e" font-size="11" font-style="italic">memory &amp; measurement — everything compounds, everything is counted</text>
+
+  <g>
+    <rect x="60" y="416" width="420" height="68" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="60" y="416" width="420" height="6" rx="3" fill="#9a958c"/>
+    <text x="74" y="440" fill="#e8e6e3" font-size="12.5" font-weight="600">Knowledge layer</text>
+    <text x="74" y="460" fill="#9a958c" font-size="11">notes, decisions, project registry — read &amp; written</text>
+    <text x="74" y="475" fill="#9a958c" font-size="11">by humans and agents alike, via MCP</text>
+  </g>
+  <g>
+    <rect x="520" y="416" width="380" height="68" rx="6" fill="#1b1a18" stroke="#2c2a26"/>
+    <rect x="520" y="416" width="380" height="6" rx="3" fill="#9a958c"/>
+    <text x="534" y="440" fill="#e8e6e3" font-size="12.5" font-weight="600">Usage ledger</text>
+    <text x="534" y="460" fill="#9a958c" font-size="11">every metered session: tokens, cost per model —</text>
+    <text x="534" y="475" fill="#9a958c" font-size="11">routing audited against actuals</text>
+  </g>
+</svg>

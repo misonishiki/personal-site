@@ -1,0 +1,297 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="The Paper Trail — Alissa Nicole"
+  description="Case study: context engineering at work, turning scattered client history into governed, agent-readable knowledge, with curated libraries and measured matching."
+  current="home"
+>
+  <p class="backlink"><a href="/">← All projects</a></p>
+  <h1>The Paper Trail</h1>
+  <p class="tagline">How to “automate” report writing, and more.</p>
+
+  <div class="tldr">
+    <strong>TL;DR</strong>
+    <ul>
+      <li><strong>Problem:</strong> every report meant re-hunting months of client emails and attachments; the early fixes (prompt-stuffing first, RAG after) produced fluent garbage.</li>
+      <li><strong>What it does:</strong> files correspondence at intake, with metadata: who sent it, which project, which report section it feeds. Attachments are indexed when they land in Drive, not when they're needed.</li>
+      <li><strong>Why it works:</strong> report sections collect what was addressed to them instead of searching for it. Opening sections run on client history; EoL sections run on standard practice and approved wording only.</li>
+      <li><strong>Governance:</strong> new knowledge enters the library through a human review gate, and colleagues operate the system from a written primer.</li>
+    </ul>
+  </div>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#the-problem">The problem</a>
+    <a href="#the-false-start">The false start</a>
+    <a href="#what-i-tried">What I tried</a>
+    <a href="#two-kinds">Two kinds of context</a>
+    <a href="#the-mental-model">The mental model</a>
+    <a href="#the-routine">The routine</a>
+    <a href="#the-library">The library</a>
+    <a href="#the-primer">The primer</a>
+    <a href="#where-it-stands">Where it stands</a>
+  </nav>
+
+  <h2 id="the-problem">The problem</h2>
+  <p>
+    At my day job, a sustainability-software company, we deliver compliance
+    reports for manufacturers, and I wanted to automate the writing of them. A report
+    like that runs on context: who said what, which file arrived when, what changed
+    scope and why. That context lived where it always lives, in people's inboxes,
+    in Drive folders, in someone's memory. Compliance doesn't tolerate that: a number
+    nobody can audit is a liability, not a deliverable. And AI can't use knowledge
+    that isn't structured.
+  </p>
+
+  <h2 id="the-false-start">The false start: more context, same failure</h2>
+  <p>
+    My first AI work was in the RAG days, the retrieval era. The pitch was seductive:
+    pipe your documents into a vector store, retrieve the right chunks at query time,
+    and the answer surfaces. Then I got to watch the same idea fail in its rawest
+    form. A student group built an early report-writing skill on company data we
+    provided, and did the <em>manual</em> version of RAG: prompt-stuffing. They fed
+    it historical reports as examples and knowledge from everywhere, more is better.
+    No vector store, no retrieval step, just volume, straight into the prompt.
+  </p>
+  <p>
+    And the failure was identical. The examples were inconsistent with each other and
+    the knowledge contradicted itself, and the output was exactly that: fluent,
+    confident, and unreliable. Contradictory context in, contradictory prose out.
+    That's when the two snapped into focus as one idea: <strong>RAG is prompt-stuffing
+    with a retrieval step in front</strong>, the same bet that volume finds truth,
+    with the same failure mode, whether you automate the stuffing or do it by hand.
+  </p>
+  <p>
+    So I simplified everything. The lesson I carried out of that era: <strong>retrieval finds text; it doesn't keep knowledge true.</strong> The job now
+    is curation, deciding what's true, current, and allowed, subdividing the problem
+    until each piece of context has exactly one job, and building the governance that
+    keeps it that way. Deterministic rules before model calls, proposals instead of
+    auto-commits, humans holding the approve button, quality measured against a gold
+    set instead of asserted. AI drafts, rules decide, humans approve.
+  </p>
+
+  <h2 id="what-i-tried">What I tried</h2>
+  <table class="try-table">
+    <thead>
+      <tr><th>Approach</th><th>The bet</th><th>What happened</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prompt-stuffing</td>
+        <td>Volume finds truth: feed it every example and all the knowledge, more is better.</td>
+        <td>Contradictory context in, fluent garbage out. The model averaged the contradictions.</td>
+      </tr>
+      <tr>
+        <td>RAG</td>
+        <td>Same bet, but automate the stuffing: vector store, retrieve chunks at query time.</td>
+        <td>Same failure with a retrieval step in front. Retrieval finds text; it doesn't keep knowledge true.</td>
+      </tr>
+      <tr>
+        <td>One context for the whole report</td>
+        <td>Treat "the report" as a single context problem with one knowledge base.</td>
+        <td>The sections fight: the opening needs client history, the EoL sections are poisoned by it.</td>
+      </tr>
+      <tr>
+        <td><strong>Curated, section-addressed context (what shipped)</strong></td>
+        <td>Each piece of context gets exactly one job; material is filed to sections at intake; new knowledge enters through a review gate.</td>
+        <td>Boring, auditable, and it works. The report collects what was addressed to it instead of searching.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="two-kinds">One report, two kinds of context</h2>
+  <p>
+    The key move was to stop treating "the report" as one context problem. It isn't,
+    it's several, and they need different things:
+  </p>
+  <ul>
+    <li><strong>The opening sections run on client project history</strong>, scope, correspondence, decisions. That context genuinely exists, but scattered. Hence the routine below: it builds the structured record those sections will draw on.</li>
+    <li><strong>The end-of-life sections run on standard practice, not history.</strong> EoL modeling follows established practice shaped by geographical assumptions and configuration choices, so I automated it with <em>no historical examples at all</em> (the old reports were too unstructured and messy to be worth retrieving anyway). Instead the section is generated from first principles: the calculation engine computes EoL for the project's configuration, and curated, approved text snippets, matched to the report section and the run's settings, placeholders filled from the engine's export, turn that computation into prose. The report writes itself from the calculation, not from old reports.</li>
+  </ul>
+  <p>
+    Now it's all connected: the report-writing layer only ever fetches the information
+    relevant to the section and configuration at hand, nothing else enters the
+    context, so nothing else can contradict it.
+  </p>
+
+  <figure>
+    <img src="/snapshots/paper-trail/paper-trail-system.svg" alt="System diagram of the whole pipeline, read top-down as a dependency chain. The need, downstream: a compliance report whose opening sections run on client project history and whose EoL sections run on standard practice plus geographical assumptions. The fetch layer: opening sections pull from a human-confirmed correspondence log; EoL sections pull from approved report snippets matched on section and run settings. The engines: a routine that turns Gmail into proposed log entries, and the EoL engine that turns configuration settings into a deterministic export. The raw, upstream: scattered Gmail and Drive history on one side, and a human-curated library of material families, variants, synonyms, don't-suggest pairs and a 389-name gold set on the other. A dashed orange feedback loop carries run corrections back into the library as pending-review intake. A crossed-out dashed box marks the rejected path: old reports as prompt examples, cut because they contradicted each other." loading="lazy" />
+    <figcaption>
+      The whole system, top-down: the downstream need (the report) only works because
+      every layer upstream organises data before the model touches it. Blue is where
+      the LLM drafts, grey is deterministic machinery, orange is a human gate. The
+      dashed loop on the right is the piece in build, how every run will make the
+      library smarter; the crossed-out box on the left is the prompt-stuffing path
+      that got cut.
+    </figcaption>
+  </figure>
+
+  <h2 id="the-mental-model">The mental model: dictionaries all the way down</h2>
+  <p>
+    Step back from the diagram and the whole system is one idea, epitomised: <strong>dictionary lookup, taken seriously.</strong>
+  </p>
+  <ul>
+    <li>The <strong>curated library</strong> is literally a dictionary, canonical entries, synonyms as accepted spellings, don't-suggest pairs as "not this word."</li>
+    <li>The <strong>sender allowlists</strong> are a dictionary of who belongs to which project.</li>
+    <li>The <strong>report snippets</strong> are a dictionary keyed by section and configuration.</li>
+    <li>Even the <strong>matcher</strong> is just looking up a misspelled word, typo tolerance and all.</li>
+  </ul>
+  <p>
+    Which makes the false start easy to diagnose: prompt-stuffing old reports was <em>reading
+    without a dictionary</em>, a pile of sentences, no entries, no
+    editors, hoping the reader infers the language. Retrieval is reading; curation is
+    writing the dictionary. And dictionaries need what mine has: editors (the review
+    gate), editions (versioned snapshots), and errata (the corrections loop). That's
+    the whole of my context engineering, honestly, build the right dictionaries,
+    keep them true, and let everything downstream be lookup.
+  </p>
+
+  <h2 id="the-routine">The routine: correspondence that files itself, carefully</h2>
+  <p>
+    The first piece exists to feed the report's opening sections. It's an automated routine
+    that reads incoming client email, matches each sender to the right project, and
+    writes a <em>proposed</em> entry into that project's structured correspondence
+    log, summary, topic tag, link back to source, while a separate script files the
+    real attachments into the right folder. Client history stops living in someone's
+    inbox and becomes a record the report layer can actually query. The stack is
+    deliberately boring: Claude Code on a scheduled task, the Gmail, Google Drive,
+    and Notion MCPs, and a plain Apps Script for the bytes. Its design
+    principles are the whole point:
+  </p>
+  <ul>
+    <li><strong>Mechanical before judgment.</strong> Most steps are plain deterministic lookups, a sender either matches the allowlist or it doesn't. Token spend and mistake risk should track actual complexity, not apply uniformly.</li>
+    <li><strong>Propose, never auto-commit.</strong> Every match lands as <code>Proposed</code>; a human confirms before it counts. Ambiguous sender? The routine asks rather than guesses.</li>
+    <li><strong>A miss stays a miss.</strong> Unknown senders go to triage, flagged, never fuzzy-matched into the closest-looking project. Silently guessing wrong is worse than asking.</li>
+    <li><strong>Least privilege, self-imposed where the platform won't.</strong> Dedicated credentials scoped to the few actions needed, no send, no delete, ever. Where the platform doesn't allow narrow scopes, the routine carries its own explicit allowlist of touchable objects; anything else is a bug, not a guess.</li>
+    <li><strong>Heavy bytes never touch the AI.</strong> A 100KB spreadsheet never passes through the model's context just to move between two Google products, attachments move on a separate script, outside the agent entirely.</li>
+  </ul>
+
+  <figure>
+    <img src="/snapshots/paper-trail/paper-trail.svg" alt="The correspondence routine: labeled Gmail intake flows through a deterministic sender match against per-project contact allowlists; matches become proposed log entries with plain-language summaries that a human confirms before they count; no-match mail goes to triage and ambiguous senders escalate from cheap rules to LLM judgment to a human; attachments move to Drive via a separate script so file bytes never touch the model." loading="lazy" />
+    <figcaption>
+      The routine, end to end. Grey is deterministic, blue is where the model is
+      allowed to think, orange is the human gate. Governance is the feature, not the
+      afterthought.
+    </figcaption>
+  </figure>
+
+  <p>
+    The log isn't an archive, <strong>it's a router.</strong> Every transaction is
+    documented with structured metadata, project, topic, date, link back to source,
+    and an index of which report section it matters to. So the report layer doesn't
+    search the log; it collects what's already addressed to the section it's writing.
+    And the section index is keyed on the report template itself, the most stable
+    dictionary in the system. Attachments get the same treatment: the moment a file
+    lands in Drive, its relevant data and indexes are documented alongside the entry,
+    so by the time a report is written, every source file is already findable and
+    already addressed to its section.
+  </p>
+  <p>
+    A router only works if its keys stay true, so the obvious question: how do you
+    stop drift? Three pieces are already load-bearing, the gate (nothing routes
+    until a human confirms), the triage queue doubling as a drift sensor (a rising
+    share of unmatched mail means the world changed and the dictionaries need an
+    editor), and the corrections loop: every confirmed match teaches the sender
+    allowlist automatically. The piece not yet built is watching drift over time,
+    triage and escalation rates charted, so the dictionaries get an editor before
+    they go stale.
+  </p>
+
+  <h2 id="the-library">The library: curated knowledge with a review gate</h2>
+  <p>
+    The second piece powers the EoL sections. It's the knowledge base behind the EoL
+    engine (the <a href="/work/eol-fixer">EoL Fixer</a>), the tool that turned
+    end-of-life verification from an 80-hour slog into a 24-hour one. The engine's material
+    matcher maps messy free-text material names ("Staal, constructieprofielen") to a
+    curated reference library, and the same library holds the approved report snippets
+    that turn a run's export into prose. The library is the context-engineering part:
+  </p>
+  <ul>
+    <li><strong>Curation with a gate.</strong> Every entry, families, variants, ~720 synonyms in three languages, don't-suggest pairs, lands as <em>Proposed</em> and only reaches a run after a human sets <em>Approved</em>. LLM-proposed synonyms get the same review as human ones; the source is marked either way.</li>
+    <li><strong>Domain rules steer the algorithm.</strong> "Material beats product", an EoL name maps to the material being disposed of, not the application, is knowledge no algorithm can invent. It's encoded as an explicit rule, not hoped for in weights.</li>
+    <li><strong>Calibrated honesty.</strong> We replaced high/medium/low confidence scores when they proved uncalibrated ("medium" was less reliable than "low"). Labels now carry measured accuracy from a 389-name gold set: exact matches are right 98–99% of the time on the test set, and the eval says so honestly: truly unseen names score lower (78%), and collecting real ones is part of the loop.</li>
+    <li><strong>Corrections become memory, designed, and being built.</strong> The review intake is live for maintainer and LLM proposals; the piece in build is the full learning loop: every run's confirmations, rejections, and substitutions flowing back automatically into pending-review intake, approved rows syncing into the next library version, the gold set growing with real names. The same mistake is not made twice.</li>
+  </ul>
+
+  <h2 id="the-primer">The primer: teaching the machine's mind to non-engineers</h2>
+  <p>
+    A knowledge system dies if only its builder can feed it. So I wrote the primer,
+    a document that teaches the matching engine's mental model to LCA specialists with
+    no computer-science background: what a gazetteer is (a dictionary, which is what
+    this whole system is), why one typo is allowed but two aren't, what a gold set is, why uncalibrated confidence is worse than none.
+    Every CS term gets an LCA analogy; every design choice names the domain rule
+    behind it. The goal: colleagues who know what the machine can and can't see,
+    and whose feedback lands as something the matcher can act on, not as bug reports
+    that need translating.
+  </p>
+
+  <h2 id="where-it-stands">Where it stands</h2>
+  <p>
+    Live, daily, on real client projects, not a demo. The routine runs every morning;
+    the library has a review queue, a validator, and versioned snapshots; the EoL
+    report path is connected end to end, the report skill only fetches what's
+    relevant to the section and configuration it's writing, so nothing contradictory
+    can leak in. In build, honestly marked: the background-report writer that will
+    consume the correspondence log (the indexing happens now, so it's ready), and the
+    library's automatic run-feedback loop. Honest open items stay open items: mail
+    without the right label is silently missed (a known gap with a planned fix), and
+    meeting recaps still arrive by hand. Context engineering, it turns out, is mostly
+    knowing exactly where your edges are.
+  </p>
+
+<style>
+  /* Discreet table of contents, pinned top-left, follows scroll (scroll-spy).
+     Same pattern as the LCI·GRAPH page. Only shown when the viewport is wide
+     enough that it can't collide with the 42rem centered column. */
+  .toc {
+    position: fixed;
+    top: 7rem;
+    left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    z-index: 5;
+  }
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    opacity: 0.45;
+    padding-left: 0.6rem;
+    border-left: 2px solid transparent;
+    transition: opacity 0.15s, border-color 0.15s;
+  }
+  .toc a:hover { opacity: 0.9; }
+  .toc a.active {
+    opacity: 1;
+    color: var(--ink);
+    border-left-color: var(--accent);
+  }
+  @media (max-width: 74rem) {
+    .toc { display: none; }
+  }
+</style>
+
+<script>
+  // Scroll-spy: highlight the TOC entry of the section currently in view.
+  // (Scroll listener, not IntersectionObserver: fast scrolling can jump an h2
+  // clean across an observer band without ever intersecting it, the active
+  // entry would then stick on the wrong section.)
+  const tocLinks = [...document.querySelectorAll('.toc a')];
+  const byId = Object.fromEntries(tocLinks.map((a) => [a.hash.slice(1), a]));
+  const heads = [...document.querySelectorAll('h2[id]')];
+  const updateToc = () => {
+    let current = heads[0];
+    for (const h of heads) {
+      if (h.getBoundingClientRect().top <= window.innerHeight * 0.3) current = h;
+    }
+    tocLinks.forEach((a) => a.classList.remove('active'));
+    if (current) byId[current.id]?.classList.add('active');
+  };
+  window.addEventListener('scroll', updateToc, { passive: true });
+  updateToc();
+</script>
+
+</Base>

@@ -46,11 +46,25 @@ p { margin-bottom: 1rem; }
 .projects { list-style: none; padding: 0; }
 .projects li { border-top: 1px solid var(--faint); padding: 1.25rem 0; }
 .projects li:last-child { border-bottom: 1px solid var(--faint); }
-.projects a { color: var(--ink); font-weight: 600; text-decoration: none; }
+.projects a, .projects strong { color: var(--ink); font-weight: 600; text-decoration: none; }
 .projects a:hover { color: var(--accent); }
 .projects p { color: var(--muted); margin: 0.25rem 0 0; }
 
 a { color: var(--accent); }
+
+/* Plain tables with hairlines, same idiom as the project list */
+.epds, .try-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+.epds th, .try-table th {
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+}
+.epds td, .try-table td { border-top: 1px solid var(--faint); padding: 0.85rem 0.75rem 0.85rem 0; vertical-align: top; }
+.epds td:last-child, .epds th:last-child { padding-right: 0; text-align: right; }
+.epds a { text-decoration: none; }
+.epds a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* Case-study pages */
 .backlink { font-size: 0.9rem; margin-bottom: 1.5rem; }
@@ -64,6 +78,31 @@ figure img, figure video {
   border-radius: 4px;
 }
 figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+
+/* TL;DR box at the top of long case studies */
+.tldr {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.tldr strong { color: var(--ink); }
+
+/* Folded technical section: native details/summary, styled to match */
+.tech-details { margin-top: 1.5rem; border-top: 1px solid var(--faint); border-bottom: 1px solid var(--faint); padding: 0.75rem 0; }
+.tech-details summary { cursor: pointer; color: var(--muted); font-size: 0.95rem; }
+.tech-details summary:hover { color: var(--ink); }
+.tech-details ul { margin-top: 0.75rem; }
+
+/* Placeholder box for media that isn't recorded yet */
+.video-placeholder {
+  border: 1px dashed var(--muted);
+  border-radius: 4px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+.video-placeholder p { margin-bottom: 0.25rem; }
 
 /* Lightbox overlay */
 #lightbox {

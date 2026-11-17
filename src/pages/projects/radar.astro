@@ -1,0 +1,170 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="The Radar — Alissa Nicole"
+  description="Case study: a pipeline that turns public LinkedIn chatter and EU official sources into structured, verifiable regulatory intelligence."
+  current="home"
+>
+  <p class="backlink"><a href="/">← All projects</a></p>
+  <h1>The Radar</h1>
+  <p class="tagline">A pipeline that turns public LinkedIn chatter and EU official sources into structured, verifiable regulatory intelligence.</p>
+
+  <nav class="toc" aria-label="Contents">
+    <a href="#the-problem">The problem</a>
+    <a href="#what-it-does">What it does</a>
+    <a href="#discipline">The discipline</a>
+    <a href="#themes">827 phrasings, 65 labels</a>
+    <a href="#cost">Cost engineering</a>
+    <a href="#official">Official sources</a>
+    <a href="#loop">The knowledge loop</a>
+    <a href="#where-it-stands">Where it stands</a>
+  </nav>
+
+  <h2 id="the-problem">The problem</h2>
+  <p>
+    Product footprinting in Europe is being rewritten by a wave of regulation, ESPR,
+    PPWR, EUDR, CSRD, the Empowering Consumers directive, and the wave doesn't
+    announce itself in one place. Vendors make claims on LinkedIn that may or may not
+    survive scrutiny. Official acts appear in the Official Journal with no alerting.
+    Competitors signal strategy in posts nobody has time to read. Staying current meant
+    reading everything, by hand, forever, so I built a machine that reads it for me.
+  </p>
+
+  <h2 id="what-it-does">What it does</h2>
+  <p>
+    Five times a day, unattended, the Radar fetches new public LinkedIn posts from a
+    curated watchlist plus keyword searches, checks EU official sources for acts
+    touching the regulations I track, classifies every item against my open research
+    questions, verifies vendor claims against their sources, clusters what people are
+    worried about into canonical themes, and renders it all into dashboards I can
+    triage in minutes. Alerts land in my notes inbox, routed by tags. Steady state:
+    ~26 posts a day, ~$13 a month.
+  </p>
+
+  <figure>
+    <img src="/snapshots/radar/radar-stack.svg" alt="The Radar pipeline: LinkedIn posts via a third-party API and EU official sources feed a verbatim, immutable raw archive; one LLM pass per post classifies against research questions and verifies claims, with failures degrading instead of aborting; annotations are stored as regenerable artifacts; theme clustering maps 827 unique phrasings to about 65 canonical labels; outputs are insights dashboards, a tag-routed notes inbox, and a research-question kanban; the human opens proposed questions, curates sources, and decides." loading="lazy" />
+    <figcaption>
+      The pipeline, end to end. Blue is where the model runs, grey is deterministic
+      code, orange is me. The model never writes to the archive, and the human only
+      ever does the judgment calls.
+    </figcaption>
+  </figure>
+
+  <h2 id="discipline">The discipline: raw is sacred, derived is disposable</h2>
+  <p>
+    The same rule as everywhere else I build: <strong>AI drafts, rules decide, humans
+    approve</strong>, and here it has a storage-layer twin. The raw archive is
+    verbatim, immutable, and written first; everything the LLM produces lands as
+    a <em>separate, regenerable annotation artifact</em> alongside it. Delete the
+    annotations and you lose nothing that can't be recomputed; corrupt them and the
+    raw truth is untouched.
+  </p>
+  <p>
+    Failure handling is contractual, not hopeful. A scraping outage logs a SKIP and
+    exits cleanly instead of spamming tracebacks; an unparseable LLM reply degrades
+    that one post's classification visibly instead of killing the run; a short-lived
+    OAuth token triggers one refresh-and-retry, never a mid-flight death. Official
+    sources get a special rule: they always classify and alert but are
+    <em>never verified</em>, checking a primary source against official sources is
+    circular, so the verdict honestly stays null.
+  </p>
+
+  <h2 id="themes">827 phrasings, 65 labels: the clustering problem</h2>
+  <p>
+    The dashboards track "industry themes", but LLM-extracted concerns are unique
+    phrasings, so across 511 posts there were <strong>748 distinct ways of saying
+    things</strong>, and the recurrence signal (≥2 posts per theme) mathematically
+    couldn't fire. The top-3 "themes" were the same theme in different words.
+  </p>
+  <p>
+    The fix is LLM clustering with the model on a leash: phrasings are clustered into
+    canonical labels in batches, but <strong>coverage is enforced in code</strong>,
+    only submitted phrasings may appear in the output, first-cluster-wins, labels
+    capped at six words. One 798-phrasing call timed out at 180 seconds, so the work
+    is batched and the artifact rewritten after each batch, an interrupted refresh
+    resumes by resubmitting only the tail. Result: <strong>827 phrasings mapped into
+    ~65 canonical labels</strong>, deep links from the themes table match every member
+    phrasing, and the raw annotations stay immutable, an absent mapping simply
+    degrades to raw phrasings.
+  </p>
+  <figure>
+    <img src="/snapshots/radar/dashboard-themes.jpg" alt="The industry-themes table on the live dashboard: canonical theme labels with last-7-days vs prior-7-days counts and trend arrows, supply chain disruption and volatility, consumer purchasing power pressure, cross-border sourcing barriers, EU compliance burden and fatigue, food system environmental pressure, fragmented EPR rules across Member States." loading="lazy" />
+    <figcaption>
+      The clustered themes table on the live dashboard: canonical labels, 7-day deltas,
+      and deep links into the filtered triage view. Recurrence signals that literally
+      could not exist on raw phrasings.
+    </figcaption>
+  </figure>
+
+  <h2 id="cost">Cost engineering: measured, then cut 94%</h2>
+  <p>
+    The scraping API is pay-per-result, and dedup was local, so every run re-paid for
+    the latest 20 posts of every source. I found out the hard way: the $5 free tier
+    evaporated in one day and the pipeline died on a 403. Projection at that cadence:
+    ~$115/month.
+  </p>
+  <p>
+    Two measured fixes. First, every run now passes a <code>scrapeUntil</code> cutoff
+    derived from the archive's newest post, never re-pay for what's already stored;
+    the watchlist run went from <strong>$0.52 to $0.038</strong>. Second, the searches
+    ran 5×/day but yielded only 2–5 genuinely new posts per query per day, so they
+    moved to the 06:00 slot only, full coverage, ≤24h latency on non-watchlist
+    voices. Steady state: <strong>~$13/month</strong>, and the 403 now degrades
+    cleanly with the API's own message surfaced.
+  </p>
+
+  <h2 id="official">Official sources: three doors, all probed live first</h2>
+  <p>
+    LinkedIn chatter is half the picture; the other half is law. EUR-Lex proper
+    bot-blocks automation, but the CELLAR SPARQL endpoint answers anonymously, so
+    new Official Journal acts arrive via one grouped query per run (the naive
+    <code>DISTINCT</code> shape multiplied rows 4× and a LIMIT would have silently
+    dropped the oldest days, the grouped shape doesn't). EFRAG has no RSS at all, so
+    a small HTML parser state machine reads its teaser markup (never regex). The
+    Commission's press corner serves an Angular shell, but its backing JSON API
+    answers anonymously. Each adapter got a live probe <em>before</em> any pipeline
+    code, sits behind the same port, and fails soft to empty, an official-source
+    outage never blocks the paid scrape.
+  </p>
+  <figure>
+    <img src="/snapshots/radar/dashboard-timeline.jpg" alt="The regulatory timeline on the live dashboard: one swimlane per regulation, CSRD/ESRS, ESPR and Digital Product Passport, Empowering Consumers, PEF, Construction Products, EUDR, Packaging, with milestone dots on a shared date axis, official-source links, and per-lane chatter counts." loading="lazy" />
+    <figcaption>
+      The regulatory timeline on the live dashboard: one lane per regulation, milestone
+      dots on a shared date axis, post chatter overlaid per lane. Category and client
+      filters dim obligations that don't apply, the "what does this law demand of a
+      client like this?" view.
+    </figcaption>
+  </figure>
+
+  <h2 id="loop">The knowledge loop: questions, not just posts</h2>
+  <p>
+    The Radar is organized around <strong>research questions</strong>, not keywords,
+    a kanban of open questions that every classification is tagged against. After each
+    run, a discovery pass scans recent annotations for recurring themes and files
+    candidates as <em>proposed</em> questions, recurrence threshold, window, and cap
+    all enforced in code, so the model can propose but never promote. Opening a
+    question stays a human move. Closing one <strong>harvests an evidence pack</strong>
+   , lifetime post count, verdict spread, corroborated highlights with citations,
+    straight into my notes.
+  </p>
+  <p>
+    The delivery work itself mirrors onto a Jira/Linear bake-off as a product-owner
+    hierarchy, local files stay the source of truth, the mirror never writes back,
+    and API calls happen only on drift. And anonymized client archetypes power a
+    per-client obligations view: <em>what does this regulation concretely demand of a
+    client like this, and when?</em>, the question the whole machine exists to answer.
+  </p>
+
+  <h2 id="where-it-stands">Where it stands</h2>
+  <p>
+    Live and unattended: five scheduled runs a day, ~26 posts a day classified, 350+
+    tests green, ops reviews on a cadence with decisions recorded. The honest limits:
+    it's a single-operator system, the watchlist and the regulatory curation are the
+    ongoing human work, and the verdict layer is only as good as the sources posts
+    cite, vendor claims default to <em>unverified</em> until evidence says otherwise.
+    That skepticism is a feature: in this domain, an unverified claim is exactly the
+    thing worth knowing about.
+  </p>
+</Base>

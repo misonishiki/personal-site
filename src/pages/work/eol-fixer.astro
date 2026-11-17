@@ -1,0 +1,126 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="The EoL Fixer — Alissa Nicole"
+  description="How a sidecar web app standardized end-of-life modelling across an EPD team: built around legacy software, not into it."
+>
+  <p class="backlink"><a href="/">← Home</a></p>
+
+  <h1>The EoL Fixer</h1>
+  <p class="tagline">
+    Standardizing end-of-life modelling for an EPD team, built around the software
+    rather than into it.
+  </p>
+
+  <h2>The problem</h2>
+  <ul>
+    <li>Everyone was <strong>cowboying their own way of doing EoL</strong>: per project, per modeller, no two files alike.</li>
+    <li>Every modeller was separately <strong>re-interpreting each standard's EoL rules</strong>. The same methodological questions (module D drawback, biogenic carbon, dataset quirks) were answered over and over, differently, by different people.</li>
+    <li>So work that should have been interpolatable between standards wasn't: same product, same physics, a whole new set of hours per programme operator.</li>
+    <li>And mistakes surfaced at verification, the most expensive moment to find them.</li>
+  </ul>
+
+  <h2>The constraints</h2>
+  <ul>
+    <li>The core software was legacy. Developers wouldn't touch it, so rebuilding or plugging in was off the table.</li>
+    <li>No API to integrate with: the <strong>only</strong> sanctioned interface was the tools' own Excel import/export.</li>
+    <li>Every modeller had their own manual workflow: inconsistent inputs, inconsistent outputs, verifier pain, and a high cost of handing over.</li>
+  </ul>
+
+  <h2>What it does</h2>
+  <p>
+    A web app that turns an end-of-life scenario sheet into EN 15804 import files for
+    the team's LCA tools, plus a verification report to check them against. It is
+    a <strong>sidecar, not a plugin</strong>: it sits outside the software and speaks
+    its one language, import files.
+  </p>
+  <h2>Features</h2>
+  <ul>
+    <li><strong>Configurable settings.</strong> Per programme operator, and fully customisable for unique cases. Settings export and import per project, which makes handovers to colleagues painless.</li>
+    <li><strong>Default material library variables.</strong> Datasets scoped to the desired database version (Ecoinvent and NMD) and end-of-life variable defaults per canonical material.</li>
+    <li><strong>Automatching.</strong> Based on input material and modeller-determined fates.</li>
+    <li><strong>Enforced reasoning.</strong> When the modeller overrides an automatched value set, reasoning is required before the run continues. The reporting output stays complete, and no hours are lost recovering forgotten choices down the line.</li>
+    <li><strong>Complete parameter set.</strong> All parameters are generated, and biogenic carbon is corrected, so nothing is left half-filled for the modeller to chase down later.</li>
+    <li><strong>Balancing parameters included.</strong> The output carries the material parameters needed to enforce primary energy balancing (PERM/PENRM) alongside secondary material fractions, so the EoL numbers stay consistent with the energy modules instead of drifting apart.</li>
+    <li><strong>Output EoL report.</strong> Built to feed the report-writing skill, which copies the relevant sections with their specific figures into the final report.</li>
+    <li><strong>Defaults that learn.</strong> Every run is archived to the company Google Drive, so defaults can be reviewed against real usage over time: when the suggested values keep beating the defaults, the defaults change.</li>
+    <li><strong>Aesthetic pleasure.</strong> A custom ASCII render of a selection of photos, for the team to enjoy while using the fixer.</li>
+  </ul>
+
+  <details class="tech-details">
+    <summary>Technical details</summary>
+    <ul>
+      <li>Python 3.11 + Flask, served by gunicorn; deployed on a small cloud host with auto-deploy from <code>main</code>.</li>
+      <li>Excel in and out via openpyxl: scenario sheet and match directory in, import files and verification report out.</li>
+      <li>Configuration as JSON with export/import, so a project's exact setup travels with it.</li>
+      <li>Standalone test scripts; CI runs the full suite on every pull request.</li>
+      <li>Versioned releases (<code>APP_VERSION</code>), each with a release note saying whether users need to re-run their work.</li>
+      <li>Design decisions recorded as ADRs; methodology written up as guides in <code>docs/</code>, so the reasoning survives staff changes.</li>
+    </ul>
+
+    <h3>How automatching works</h3>
+    <p>
+      The matcher is deterministic, and no LLM is needed: by the time EoL modelling
+      starts, the modeller has already linked the client's specific BoM ingredients
+      to product families at module A1. The names that reach the matcher are
+      therefore already curated, and careful string matching is enough. Given a
+      material name from the scenario sheet, it normalises the text (lowercase,
+      accents stripped, words only) and matches it against the material library.
+      Matching is Dutch-compound-aware: a compound's last part names what the thing
+      is ("constructiestaal" is steel), while negating prefixes block false hits
+      ("ongewapend" never matches "gewapend"). One typo is tolerated.
+    </p>
+    <p>
+      Names are tried most-specific-part first, then broader parts, then the category
+      as a weaker fallback. Every suggestion reports its confidence (exact, partial,
+      or guess) and carries its reason: which term matched, via synonym or family,
+      reviewed or not. Leftover words can refine a family match down to a variant,
+      and packaging rows route to the family's packaging variant. A suggestion the
+      modeller overrides requires written reasoning before the run continues, and
+      both the match and the reasoning land in the verification report.
+    </p>
+    <p>
+      When the matcher finds nothing, the modeller can still select the most
+      appropriate library entry by hand. That manual choice is registered in the
+      team's shared folder and added to the synonym list, so the next run
+      automatches it: every manual fix becomes a permanent improvement to the
+      matcher.
+    </p>
+    <figure>
+      <img src="/snapshots/eol-fixer/automatching.svg" alt="Automatching flow: material name is normalised, matched against the material library (most specific part first, typo-tolerant, barred terms blocked), producing a suggestion with confidence and reason, which the modeller accepts or overrides with enforced reasoning." />
+      <figcaption>The automatching flow: deterministic matcher, human decision, everything reported.</figcaption>
+    </figure>
+  </details>
+
+  <figure class="video-placeholder">
+    <div>
+      <p><strong>Demo video coming soon</strong></p>
+      <p class="muted-note">A narrated walkthrough of the tool in real use.</p>
+    </div>
+  </figure>
+
+  <h2>The receipts</h2>
+  <ul>
+    <li>Hosted, versioned, CI-tested, and used by the whole team.</li>
+    <li>Every Ecochain EPD published since 2025 was modelled with it (see the <a href="/epds">published EPDs</a>).</li>
+    <li>70% less time on EoL modelling and reporting.</li>
+    <li>Methodology covered for five programme operators: NMD, EPD Global, EPD International, INIES, and self-declared EPDs.</li>
+  </ul>
+
+  <h2>Why it's built this way</h2>
+  <ul>
+    <li><strong>Import/export as the integration layer.</strong> If the software won't change, standardize what crosses its border instead.</li>
+    <li><strong>One scenario, many dialects.</strong> The tool holds the EoL scenario once (standard-independent: masses, fates, distances) and translates it into each programme operator's format and methodology rules. The interpolatability that was missing by hand is the core of the design.</li>
+    <li><strong>Interpretation is encoded once, centrally.</strong> Methodology decisions live in the tool and its written guides, not in each modeller's head. Ask the hard question once, ship the answer to everyone.</li>
+    <li><strong>Defaults carry the load.</strong> The material library saves the dataset and variable choices for common materials, so the repetitive 80% of a project is pre-decided and the modeller's hours go to the unusual 20%.</li>
+    <li><strong>One standardised way of working.</strong> The real workflow was studied, then the correct path became the default path. The verification report makes deviations visible.</li>
+    <li><strong>Human approves before import.</strong> The tool drafts, the modeller commits.</li>
+  </ul>
+
+  <p class="muted-note">
+    Internal tool, shown with fictional project data: no client information,
+    no proprietary assets.
+  </p>
+</Base>

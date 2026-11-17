@@ -1,3 +1,13 @@
+## Working style (added 2026-11-17 after user called out slowness)
+
+For small changes on this site: **edit → build → screenshot, no sightseeing.**
+
+- Don't re-explore the codebase for a two-file change — the structure is known (pages in `src/pages/`, layout in `src/layouts/Base.astro`, styles in `src/styles/global.css`).
+- Don't search for browser/tool signatures you already have — open the URL and screenshot in one call.
+- Never leave a hanging promise (`await new Promise(()=>{})`) in an execute block — it freezes the step until it's killed.
+- Keep narration minimal; the user watches this happen live and notices dead time.
+- **No em-dashes in site copy** (user rule, 2026-11-17). Use colons, commas, or full stops. (The `<title>` convention "X — Alissa Nicole" is exempt: site-wide pattern.)
+
 ## Development
 
 When starting the dev server, use background mode:

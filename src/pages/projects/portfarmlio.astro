@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base
+  title="PORTFARMLIO — Alissa Nicole"
+  description="Case study: PORTFARMLIO, a strategy-agnostic algorithmic trading platform with a rigor-enforcing backtest harness and a farm-view dashboard."
+>
+  <p class="backlink"><a href="/">← All projects</a></p>
+
+  <h1>PORTFARMLIO</h1>
+  <p class="tagline">An algorithmic trading platform, not a bot: one engine, plug-in strategies, and a dashboard that is also a farm.</p>
+  <p>
+    <a href="/portfarmlio/garden.html">Browse the garden view ↗</a> ·
+    <a href="/portfarmlio/">browse the serious dashboard ↗</a><br />
+    <span class="muted-note">Frozen snapshots of the live platform (paper-trading data, 2026-11-17). Tooltips still work; hover anything underlined.</span>
+  </p>
+
+  <figure>
+    <video src="/snapshots/portfarmlio/garden.mp4" autoplay loop muted playsinline></video>
+    <figcaption>The garden view in motion: land is capital, crops are positions, and the livestock keeps walking. Paper money throughout.</figcaption>
+  </figure>
+
+  <h2>The problem</h2>
+  <p>
+    Most personal trading code is a spaghetti script: strategy logic, broker calls, and
+    risk checks tangled together, where one bug costs real money and adding a second
+    strategy means rewriting the first. I wanted a platform, not a bot.
+  </p>
+
+  <h2>The constraints</h2>
+  <ul>
+    <li>Real money is on the other side of the API, so safety cannot be a convention, it has to be enforced in code.</li>
+    <li>Strategies come and go with ideas and elections; the engine should never change when one does.</li>
+    <li>Learning requires running the whole thing with no keys, no network, and no packages installed.</li>
+  </ul>
+
+  <h2>What it does</h2>
+  <p>
+    A strategy-agnostic engine, plug-in strategy bundles, and a backtesting harness
+    that enforces rigor, written in Python against Alpaca. Paper trading by default;
+    live trading requires two separate gates. Without keys it degrades into a dry-run
+    offline mode, so a bare checkout runs end-to-end immediately.
+  </p>
+
+  <h2>Why it's built this way</h2>
+  <ul>
+    <li><strong>The contract is sacred.</strong> The engine knows nothing about any strategy; a strategy knows nothing about plumbing. No strategy module talks to the broker, and the risk manager has zero strategy-specific branches. Adding a strategy is one new bundle plus one line in config.</li>
+    <li><strong>Safety is structural, not disciplined.</strong> A kill-switch halts all trading at a fixed daily loss, a single-order size cap catches sizing bugs, every order carries an idempotency key, and a reconciliation pass compares the book against the broker with an objection window before acting.</li>
+    <li><strong>Every decision is logged.</strong> A structured audit log records signals, decisions, fills, and risk rejections, so any position can be explained after the fact.</li>
+    <li><strong>Honesty over cosmetics.</strong> Strategies that lack a verified data feed are OFF and say why, with the missing piece documented as a TODO, instead of trading on vibes.</li>
+    <li><strong>Serious numbers, silly face.</strong> The same state renders twice: a grey operations dashboard, and a farm where land is capital, crops are positions, frost is the stop-loss, and the gates are the kill-switch. Watching risk is easier when the risk moos at you.</li>
+  </ul>
+
+  <details class="tech-details">
+    <summary>Technical details</summary>
+    <ul>
+      <li><strong>Python, stdlib-first.</strong> The core runs with zero third-party packages: no installs, no build step, no supply chain to rot. A bare checkout runs end-to-end in dry-run, which makes the whole platform something you can learn by running, not by reading setup docs.</li>
+      <li><strong>Alpaca as the only broker dependency.</strong> Commission-free, paper trading built in, decent API, and imported lazily so the platform works without it. One broker, one adapter, nothing broker-shaped leaks past it.</li>
+      <li><strong>Hand-rolled backtester.</strong> Deliberate, not lazy: writing the backtest harness yourself forces the rigor questions (survivorship, look-ahead, slippage) into the open instead of hiding behind a library's defaults. Backtrader stays on the shelf as a cross-check.</li>
+      <li><strong>Dashboard = stdlib http.server + vanilla JS/CSS.</strong> Read-only by construction: the same state renders as the grey operations view and the farm view, both served as plain HTML with no framework. The garden is pure CSS animation, pixel-art gradients and emoji livestock.</li>
+      <li><strong>Optional AI overseer.</strong> An anthropic-backed narrative layer can comment on the overseer's verdicts, but the verdicts themselves are deterministic and work without it: AI comments, rules decide.</li>
+    </ul>
+  </details>
+
+  <h2>Where it stands</h2>
+  <p class="muted-note">
+    Paper trading only. Two strategies run live logic (a defined-risk options sleeve and
+    an election-thesis basket whose entry window has closed), two more are built but OFF
+    until their data feeds are trustworthy. The snapshots show the platform as it is,
+    including reconciliation warnings and an over-deployed field, because those are the
+    parts the safety system exists to catch.
+  </p>
+</Base>
