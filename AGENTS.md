@@ -8,6 +8,10 @@ For small changes on this site: **edit → build → screenshot, no sightseeing.
 - Keep narration minimal; the user watches this happen live and notices dead time.
 - **No em-dashes in site copy** (user rule, 2026-11-17). Use colons, commas, or full stops. (The `<title>` convention "X — Alissa Nicole" is exempt: site-wide pattern.)
 
+## Glossary system (added 2026-11-17)
+
+Definitions live ONLY in `src/data/glossary.js`. `/glossary` renders from it; `src/components/GlossaryCat.astro` (included in Base) powers the cat tooltips. Mark a term anywhere with `<span class="term" data-term="EPD">EPD</span>` (data-term must match a key in glossary.js). Desktop: hover raises the tooltip; touch: tap opens the bottom-right panel. Cat image: `public/cat.png` (cutout + glasses/tie collage, change `CAT_SRC` in the component to swap).
+
 ## Case-study pages (convention since 2026-11-17)
 
 All case studies use `src/layouts/CaseStudy.astro`, never Base directly. The layout provides: standardized backlink, h1/tagline from props, an optional `slot="tldr"` TL;DR box, and an auto-generated pinned scroll-spy ToC (built from `h2[id]` at runtime; use `data-toc="short label"` for long headings; needs 4+ sections to appear; mobile gets a "Contents" bottom-sheet toggle). To add a project: create the page, wrap in CaseStudy, write h2 sections. Do NOT hand-write ToC markup, backlinks, or h1s.

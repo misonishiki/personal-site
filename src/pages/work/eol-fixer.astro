@@ -25,7 +25,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
 
   <h2 id="what-it-does">What it does</h2>
   <p>
-    A web app that turns an end-of-life scenario sheet into EN 15804 import files for
+    A web app that turns an <span class="term" data-term="EoL">end-of-life</span> scenario sheet into <span class="term" data-term="EN 15804">EN 15804</span> import files for
     the team's LCA tools, plus a verification report to check them against. It is
     a <strong>sidecar, not a plugin</strong>: it sits outside the software and speaks
     its one language, import files.
@@ -42,7 +42,7 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
   <h3>Modelling you can defend</h3>
   <ul>
     <li><strong>Complete parameter set.</strong> All parameters are generated, so nothing is left half-filled for the modeller to chase down later.</li>
-    <li><strong>Automatic biogenic carbon correction.</strong> Biogenic carbon is corrected automatically in every run, no manual fixing after the fact.</li>
+    <li><strong>Automatic biogenic carbon correction.</strong> <span class="term" data-term="Biogenic carbon">Biogenic carbon</span> is corrected automatically in every run, no manual fixing after the fact.</li>
     <li><strong>Balancing parameters included.</strong> The output carries the material parameters needed to enforce primary energy balancing (PERM/PENRM) alongside secondary material fractions, so the EoL numbers stay consistent with the energy modules instead of drifting apart.</li>
     <li><strong>Data quality assessment built in.</strong> Deterministically calculated for time, geography, and technology, with generic, specific, and proxy classification. Adjustable per user override.</li>
   </ul>

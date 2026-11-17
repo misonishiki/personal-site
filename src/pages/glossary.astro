@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { GLOSSARY } from '../data/glossary.js';
+const terms = [...GLOSSARY].sort((a, b) => a.term.localeCompare(b.term));
+---
+
+<Base
+  title="Glossary"
+  description="Jargon from the sustainability and EPD world, defined once, in plain language."
+  current="glossary"
+>
+  <h1>Glossary</h1>
+  <p class="muted-note">
+    Jargon from the sustainability and EPD world, defined once, in plain language.
+    Where these words appear on this site, hovering (or tapping) evokes the definition.
+  </p>
+
+  <dl class="glossary">
+    {terms.map(({ term, def }) => (
+      <>
+        <dt id={term.toLowerCase().replace(/[^a-z0-9]+/g, '-')}>{term}</dt>
+        <dd>{def}</dd>
+      </>
+    ))}
+  </dl>
+</Base>

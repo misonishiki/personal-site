@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import GlossaryCat from '../components/GlossaryCat.astro';
 
 interface Props {
   title: string;
@@ -15,6 +16,7 @@ const linkedin = 'https://www.linkedin.com/in/alissa-nicole-thompson-213577118/'
 const nav = [
   { href: '/', label: 'Projects', key: 'home' },
   { href: '/epds', label: 'EPDs', key: 'epds' },
+  { href: '/glossary', label: 'Glossary', key: 'glossary' },
   { href: '/about', label: 'About', key: 'about' },
 ];
 ---
@@ -47,6 +49,7 @@ const nav = [
         <a href="https://scop3.substack.com/" rel="me">Substack</a>
       </footer>
     </div>
+    <GlossaryCat />
 
     <!-- Lightbox: click a figure image to expand, click/Esc to close. -->
     <div id="lightbox" hidden>

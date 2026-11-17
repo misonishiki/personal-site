@@ -80,6 +80,11 @@ figure img, figure video {
 }
 figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
 
+/* Glossary page: term list */
+.glossary { margin-top: 1.5rem; }
+.glossary dt { font-weight: 600; margin-top: 1.25rem; }
+.glossary dd { margin: 0.15rem 0 0; color: var(--muted); }
+
 /* TL;DR box at the top of long case studies */
 .tldr {
   border-left: 3px solid var(--accent);
