@@ -1,13 +1,14 @@
 ---
-// The glossary cat: hover a marked term on desktop and the cat rises from the
-// word with a definition box; on touch devices, tap the term and the cat panel
-// slides in from the bottom-right. Terms are marked with
-// <span class="term" data-term="EPD">EPD</span>; definitions come from
-// src/data/glossary.js (serialized below for the client script).
-// Swap the cat: replace CAT_SRC with a photo in /public (e.g. '/cat.png').
+// The glossary cat: a peeker, not a poser.
+// Desktop (hover a .term): the cat rises behind the word, top half showing,
+// with a speech bubble to its RIGHT carrying the definition.
+// Touch (tap a .term): the cat leans in from the right screen edge, slanted,
+// with the bubble to its LEFT.
+// Terms: <span class="term" data-term="EPD">EPD</span>; defs: src/data/glossary.js.
+// Cat: public/cat.png (cutout collage), swap via CAT_SRC.
 import { GLOSSARY } from '../data/glossary.js';
 const defs = Object.fromEntries(GLOSSARY.map((g) => [g.term, g.def]));
-const CAT_SRC = '/cat.png'; // the official glossary cat (cutout, glasses + tie)
+const CAT_SRC = '/cat.png';
 ---
 
 <script type="application/json" id="glossary-data" set:html={JSON.stringify(defs)} />
@@ -18,20 +19,18 @@ const CAT_SRC = '/cat.png'; // the official glossary cat (cutout, glasses + tie)
       ? `<img src="${CAT_SRC}" alt="" class="gcat-img">`
       : '<span class="gcat-emoji">🐈</span>';
 
-    // Two shared elements, created once.
-    const tip = document.createElement('div');
+    const inner = (term) => `
+      <div class="gcat-peek">${catHTML}</div>
+      <div class="gcat-bubble"><strong>${term}</strong><p>${defs[term] || 'Definition coming soon.'}</p></div>`;
+
+    const tip = document.createElement('div');      // desktop hover
     tip.className = 'gcat-tip';
     tip.setAttribute('role', 'tooltip');
-    const panel = document.createElement('div');
+    const panel = document.createElement('div');    // touch panel
     panel.className = 'gcat-panel';
     panel.innerHTML = `<button class="gcat-close" aria-label="Close">×</button><div class="gcat-body"></div>`;
     document.body.append(tip, panel);
 
-    const fill = (el, term) => {
-      const def = defs[term] || 'Definition coming soon.';
-      el.innerHTML = `${catHTML}<div class="gcat-text"><strong>${term}</strong><p>${def}</p></div>`;
-    };
-    fill(tip, '');
     panel.querySelector('.gcat-close').addEventListener('click', () => panel.classList.remove('open'));
     document.addEventListener('click', (e) => {
       if (panel.classList.contains('open') && !panel.contains(e.target) && !e.target.closest('.term')) {
@@ -45,93 +44,121 @@ const CAT_SRC = '/cat.png'; // the official glossary cat (cutout, glasses + tie)
       const term = el.dataset.term;
       el.setAttribute('tabindex', '0');
 
-      // Desktop: cat hovers up from the word.
       el.addEventListener('mouseenter', () => {
         if (!finePointer.matches) return;
-        fill(tip, term);
+        tip.innerHTML = inner(term);
         const r = el.getBoundingClientRect();
-        tip.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 340)) + 'px';
-        tip.style.top = (r.top + window.scrollY - 8) + 'px';
+        tip.style.left = Math.max(4, Math.min(r.left, window.innerWidth - 340)) + 'px';
+        tip.style.top = (r.top + window.scrollY) + 'px';   // bottom edge at the text
         tip.classList.add('show');
       });
       el.addEventListener('mouseleave', () => tip.classList.remove('show'));
 
-      // Touch (and keyboard): cat slides in from the bottom-right.
-      el.addEventListener('click', (e) => {
+      const openPanel = (e) => {
         if (finePointer.matches) return;
         e.preventDefault();
-        fill(panel.querySelector('.gcat-body'), term);
+        panel.querySelector('.gcat-body').innerHTML = inner(term);
         panel.classList.add('open');
-      });
+      };
+      el.addEventListener('click', openPanel);
       el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          fill(panel.querySelector('.gcat-body'), term);
-          panel.classList.add('open');
-        }
+        if (e.key === 'Enter' || e.key === ' ') openPanel(e);
       });
     });
   })();
 </script>
 
 <style is:global>
-  /* A defined term: dotted accent underline = "there is a definition here". */
   .term { border-bottom: 1px dotted var(--accent); cursor: help; }
 
-  /* Desktop tooltip: rises up from the word, ends ABOVE it. */
-  .gcat-tip {
-    position: absolute;
-    transform: translateY(calc(-100% + 10px));
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    display: flex;
-    gap: 0.6rem;
-    align-items: flex-end;
-    max-width: 330px;
+  /* ---- shared bits ---- */
+  .gcat-peek {
+    overflow: hidden;              /* the "half body cut off" */
+    height: 105px;                 /* head + glasses + a hint of tie */
+    width: 92px;
+    flex: none;
+  }
+  .gcat-peek .gcat-img { width: 92px; height: auto; display: block; }
+  .gcat-peek .gcat-emoji { font-size: 2.2rem; }
+  .gcat-bubble {
+    position: relative;
     background: var(--panel, #1b1a18);
     border: 1px solid var(--accent);
-    border-radius: 8px 8px 8px 2px;
-    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    max-width: 240px;
     font-size: 0.85rem;
     line-height: 1.45;
-    z-index: 90;
     box-shadow: 4px 4px 0 rgba(107, 155, 255, 0.25);
+  }
+  .gcat-bubble p { margin: 0.15rem 0 0; color: var(--muted); }
+
+  /* ---- desktop: cat stands behind the word, bubble to its RIGHT ---- */
+  .gcat-tip {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;         /* cat feet on the text line */
+    gap: 0.55rem;
+    transform: translateY(calc(-100% + 12px));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 90;
   }
   .gcat-tip.show { opacity: 1; transform: translateY(-100%); }
+  .gcat-tip .gcat-bubble { margin-bottom: 0.9rem; }
+  .gcat-tip .gcat-bubble::before { /* tail pointing left, at the cat */
+    content: '';
+    position: absolute;
+    left: -7px;
+    bottom: 14px;
+    border: 7px solid transparent;
+    border-right-color: var(--accent);
+    border-left: 0;
+  }
 
-  /* Mobile panel: bottom-right slide-in. */
+  /* ---- touch: cat leans in from the right edge, bubble to its LEFT ---- */
   .gcat-panel {
     position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    max-width: 26rem;
-    margin-left: auto;
-    transform: translateX(120%);
-    transition: transform 0.25s ease;
-    background: var(--panel, #1b1a18);
-    border: 1px solid var(--accent);
-    border-radius: 8px;
-    padding: 0.9rem 1rem;
+    right: 0;
+    bottom: 12%;
+    transform: translateX(115%) rotate(7deg);   /* slanted, off-canvas */
+    transition: transform 0.28s cubic-bezier(0.2, 1.1, 0.3, 1);
     z-index: 95;
-    box-shadow: 4px 4px 0 rgba(107, 155, 255, 0.25);
   }
-  .gcat-panel.open { transform: translateX(0); }
-  .gcat-panel .gcat-body { display: flex; gap: 0.7rem; align-items: flex-start; }
+  .gcat-panel.open { transform: translateX(6%) rotate(7deg); } /* edge of cat offscreen */
+  .gcat-panel .gcat-body {
+    display: flex;
+    flex-direction: row-reverse;   /* bubble on the LEFT of the cat */
+    align-items: flex-end;
+    gap: 0.55rem;
+  }
+  .gcat-panel .gcat-peek { height: 150px; width: 130px; }
+  .gcat-panel .gcat-peek .gcat-img { width: 130px; }
+  .gcat-panel .gcat-bubble { margin-bottom: 1.2rem; max-width: 200px; }
+  .gcat-panel .gcat-bubble::before { /* tail pointing right, at the cat */
+    content: '';
+    position: absolute;
+    right: -7px;
+    bottom: 14px;
+    border: 7px solid transparent;
+    border-left-color: var(--accent);
+    border-right: 0;
+  }
   .gcat-close {
     position: absolute;
-    top: 0.3rem;
-    right: 0.55rem;
-    background: none;
-    border: none;
+    top: -0.6rem;
+    left: -0.6rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--panel, #1b1a18);
+    border: 1px solid var(--accent);
     color: var(--muted);
-    font-size: 1.2rem;
+    font-size: 0.95rem;
+    line-height: 1;
     cursor: pointer;
+    z-index: 2;
   }
   .gcat-close:hover { color: var(--ink); }
-
-  .gcat-text p { margin: 0.15rem 0 0; color: var(--muted); }
-  .gcat-emoji { font-size: 2rem; line-height: 1; }
-  .gcat-img { width: 64px; height: auto; align-self: flex-end; }
 </style>
