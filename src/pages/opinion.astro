@@ -1,17 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
-import { writing } from '../data/writing.js';
+import { opinions } from '../data/opinions.js';
 
 const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-const entries = [...writing].sort((a, b) => b.date.localeCompare(a.date));
+const entries = [...opinions].sort((a, b) => b.date.localeCompare(a.date));
 ---
 
 <Base
-  title="Writing — Alissa Nicole"
-  description="Essays and posts by Alissa Nicole: long-form on scop3, short-form on LinkedIn."
-  current="writing"
+  title="Opinion — Alissa Nicole"
+  description="Opinions by Alissa Nicole: long-form essays on scop3, short-form posts on LinkedIn."
+  current="opinion"
 >
-  <h1>Writing</h1>
+  <h1>Opinion</h1>
   <p class="tagline">Long-form essays on scop3, short-form posts on LinkedIn.</p>
 
   <ul class="projects">

@@ -1,7 +1,7 @@
-// Writing index: everything shown on /writing, sorted newest-first by the page.
+// Opinion index: everything shown on /opinion, sorted newest-first by the page.
 // source: 'scop3' = long-form Substack essays, 'LinkedIn' = short-form posts.
 // Add new entries here; the page and its metadata render from this list.
-export const writing = [
+export const opinions = [
   {
     date: '2026-08-22',
     source: 'scop3',
