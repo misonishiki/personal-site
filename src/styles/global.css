@@ -80,6 +80,16 @@ figure img, figure video {
 }
 figcaption { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
 
+/* Keyword chips (About page): pills in muted ink, hairline borders */
+.chips { list-style: none; padding: 0; margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chips li {
+  border: 1px solid var(--faint);
+  border-radius: 999px;
+  padding: 0.15rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* Glossary page: term list */
 .glossary { margin-top: 1.5rem; }
 .glossary dt { font-weight: 600; margin-top: 1.25rem; }
