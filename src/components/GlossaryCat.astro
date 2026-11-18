@@ -135,12 +135,8 @@ const CAT_SRC = '/cat.png';
   }
   .gcat-panel .gcat-peek { height: 210px; width: 190px; }
   .gcat-panel .gcat-peek .gcat-img { width: 190px; }
-  @media (max-width: 480px) {          /* keep cat + bubble inside a phone screen */
-    .gcat-panel .gcat-peek { width: 110px; height: 122px; }
-    .gcat-panel .gcat-peek .gcat-img { width: 110px; }
-    .gcat-panel .gcat-bubble { max-width: 52vw; }
-  }
-  .gcat-panel .gcat-bubble { margin-bottom: 1.2rem; max-width: 200px; }
+  /* bubble takes whatever width the 190px cat leaves on a phone */
+  .gcat-panel .gcat-bubble { margin-bottom: 1.2rem; max-width: min(200px, calc(100vw - 225px)); }
   .gcat-panel .gcat-bubble::before { /* tail pointing right, at the cat */
     content: '';
     position: absolute;
