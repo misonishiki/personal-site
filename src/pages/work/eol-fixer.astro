@@ -9,18 +9,23 @@ import CaseStudy from '../../layouts/CaseStudy.astro';
 >
 
   <h2 id="the-problem">The problem</h2>
+  <p>
+    Nothing here was anyone's fault. EoL modelling leaves room for interpretation,
+    and the team had no shared place to record the answers, so the same questions
+    got answered many times over.
+  </p>
   <ul>
-    <li>Everyone was <strong>cowboying their own way of doing <span class="term" data-term="EoL">EoL</span></strong>: per project, per modeller, no two files alike.</li>
-    <li>Every modeller was separately <strong>re-interpreting each <span class="term" data-term="Standard">standard</span>'s EoL rules</strong>. The same methodological questions (<span class="term" data-term="Module D">module D</span> drawback, biogenic carbon, dataset quirks) were answered over and over, differently, by different people.</li>
-    <li>So work that should have been interpolatable between standards wasn't: same product, same physics, a whole new set of hours per <span class="term" data-term="Programme operator">programme operator</span>.</li>
-    <li>And mistakes surfaced at verification, the most expensive moment to find them.</li>
+    <li>Every modeller had developed their own way of doing <span class="term" data-term="EoL">EoL</span>: per project, per person, no two files alike.</li>
+    <li>Each <span class="term" data-term="Standard">standard</span>'s EoL rules were interpreted individually, over and over. The same methodological questions (<span class="term" data-term="Module D">module D</span> drawback, biogenic carbon, dataset quirks) could get different answers depending on who picked up the project.</li>
+    <li>So work that should have been interpolatable between standards wasn't: same product, same physics, a fresh set of hours per <span class="term" data-term="Programme operator">programme operator</span>.</li>
+    <li>And inconsistencies surfaced at verification, the most expensive moment to catch them.</li>
   </ul>
 
   <h2 id="the-constraints">The constraints</h2>
   <ul>
-    <li>The core software was legacy. Developers wouldn't touch it, so rebuilding or plugging in was off the table.</li>
+    <li>The core software was a given: legacy, closed, and not changing. Rebuilding or plugging in was off the table.</li>
     <li>No API to integrate with: the <strong>only</strong> sanctioned interface was the tools' own Excel import/export.</li>
-    <li>Every modeller had their own manual workflow: inconsistent inputs, inconsistent outputs, <span class="term" data-term="Verifier">verifier</span> pain, and a high cost of handing over.</li>
+    <li>With no shared tooling, every handover to a colleague meant learning their personal workflow first.</li>
   </ul>
 
   <h2 id="what-it-does">What it does</h2>
